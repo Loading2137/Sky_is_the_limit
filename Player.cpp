@@ -10,19 +10,25 @@
 Level_Platforms p1;
 Level_Walls p2;
 std::vector<sf::FloatRect>PlatformBounds = p1.PlatformBounds();
-std::vector<sf::FloatRect>WallBounds = p2.WallBound();
+sf::FloatRect BottomWall = p2.BottomWallBound();
+sf::FloatRect LeftWall = p2.LeftWallBound();
+sf::FloatRect RightWall = p2.RightWallBound();
+
+
 
 
 
 //Gravity
-//float jump_speed = -2200.f;
-//const float gravity_const = 20.f;
-//bool isJumping =0;
-//bool onFloor =0;
-//float Time = 0;
-//float gravity;
+float jump_speed = -1200.f;
+const float gravity_const = 60.f;
+bool isJumping =0;
+bool onFloor =0;
+float Time = 0;
+float Time_after_jump=5.f;
+float gravity = gravity_const;
+float gravity_falling = gravity_const;
 
-//bool Colision_y=0;
+bool Colision_y=0;
 
 
 
@@ -40,12 +46,14 @@ Player::Player()
 }
 
 
+
 void Player::Movement(float Second)
 {
 
     sf::Vector2f velocity;
     velocity.x=0.f;
     velocity.y=0.f;
+    sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
 
     float movement_speed = 400.f;
 
@@ -58,260 +66,220 @@ void Player::Movement(float Second)
         velocity.x += movement_speed*Second;
     }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-        velocity.y += movement_speed*Second;
+    if((sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) ){
+          //std::cout<<Time_after_jump<<std::endl;
+        if(Time_after_jump>0.3)
+        {
+            std::cout<<"Jump"<<std::endl;
+        isJumping=1;
+        onFloor=0;
+        Time_after_jump=0;
+        }
     }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-        velocity.y += -movement_speed*Second;
-    }
 
 
-    Player_Box[0].move(velocity);
-
-    //Wall colision
-    for(auto &i : WallBounds)
+    if(isJumping)
     {
-        sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
+
+
+        //std::cout<<gravity<<std::endl;
+        Time +=Second;
+        gravity +=(gravity_const *Time*Time)/2.f;
+        velocity.y +=(jump_speed+ gravity)*Second;
+
+        for(auto &i : PlatformBounds)
+        {
+            sf::FloatRect wallBounds = i;
+
+            if(wallBounds.intersects(PlayerBounds))
+            {
+
+                if(PlayerBounds.top < wallBounds.top
+                        &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                {
+                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
+                    velocity.y=0.f;
+                    onFloor=1;
+                    isJumping=0;
+                    gravity =0;
+                    Time = 0;
+                    //Time_after_jump+=Second;
+                }
+
+                else if(PlayerBounds.top > wallBounds.top
+                        &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                {
+                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
+                    velocity.y=0.f;
+                }
+
+                else if(PlayerBounds.left < wallBounds.left
+                        &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                {
+                    //Player_Box[0].setPosition(wallBounds.left- PlayerBounds.width, PlayerBounds.top);
+                    velocity.x=0.f;
+                }
+
+                else if(PlayerBounds.left > wallBounds.left
+                        &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                {
+                    //Player_Box[0].setPosition(wallBounds.left+ wallBounds.width, PlayerBounds.top);
+                    velocity.x=0.f;
+                }
+                else onFloor =0;
+            }
+        }
+
+        //Wall colision
+
+        //Bottom collisions
+        if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
+        {
+            Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
+            onFloor=1;
+            isJumping=0;
+            gravity =0;
+            Time = 0;
+
+            velocity.y=0.f;
+        }
+        //Left collision
+        else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+        {
+            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        //Right collision
+        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+        {
+            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        else onFloor =0;
+    }
+
+
+
+
+
+    if(!onFloor)    //collisions when in air/not on floor
+    {
+        Time +=Second;
+        gravity +=(gravity_const *Time*Time)/2.f;
+        velocity.y += gravity*Second;
+
+        for(auto &i : PlatformBounds)       //collions with platforms
+        {
+            sf::FloatRect wallBounds = i;
+
+            if(wallBounds.intersects(PlayerBounds))
+            {
+
+                if(PlayerBounds.top < wallBounds.top
+                        &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                {
+                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
+                    velocity.y=0.f;
+                    onFloor=1;
+                    isJumping=0;
+                    gravity =0;
+                    Time = 0;
+
+                }
+
+                else if(PlayerBounds.top > wallBounds.top
+                        &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                {
+                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
+                    velocity.y=0.f;
+                }
+
+                else if(PlayerBounds.left < wallBounds.left
+                        &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                {
+                    velocity.x=0.f;
+                }
+
+                else if(PlayerBounds.left > wallBounds.left     //warunek widmo
+                        &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
+                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                {
+                    velocity.x=0.f;
+                }
+                else onFloor =0;
+            }
+        }
+
+        //Wall colisions
+
+        //Bottom collisions
+        if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
+        {
+            Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
+            onFloor=1;
+            isJumping=0;
+            gravity =0;
+            Time = 0;
+            velocity.y=0.f;
+        }
+        //Left collision
+        else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+        {
+            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        //Right collision
+        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+        {
+            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        else onFloor =0;
+    }
+
+    if(onFloor)     //collisions with walls when on floor
+    {
 
         //Left collision
-    if(PlayerBounds.left< i.left+i.width)
-        Player_Box[0].setPosition(i.left+i.width, Player_Box[0].getPosition().y);
-//        //Right collision
-//    else if(Player_Box[0].getPosition().x> i.left)
-//        Player_Box[0].setPosition(i.left, Player_Box[0].getPosition().y);
-//        //Bottom collision
-//    else if(Player_Box[0].getPosition().y>i.top)
-//        Player_Box[0].setPosition(Player_Box[0].getPosition().x,i.top);
+        if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+        {
+            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        //Right collision
+        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+        {
+            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+            velocity.x=0.f;
+        }
+        else onFloor =0;
     }
 
-
-    std::cout<<Player_Box[0].getPosition().x<<"    "<<Player_Box[0].getPosition().y<<std::endl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    if(isJumping==1)
-//    {
-//        Time +=Second;
-//        gravity +=(gravity_const *Time*Time)/2;
-
-
-
-
-//         velocity.y += (jump_speed+gravity_const)*Second;
-
-
-//        for(auto &i : GroudBounds){
-//            sf::FloatRect playerBounds = Player_Box[0].getGlobalBounds();
-//            sf::FloatRect wallBounds = i;
-//            GroundDetection= playerBounds;
-//            GroundDetection.left += velocity.x;
-//            GroundDetection.top += velocity.y;
-
-//            if(wallBounds.intersects(GroundDetection))
-//            {
-
-//                if(playerBounds.top < wallBounds.top
-//                        &&  playerBounds.top+playerBounds.height< wallBounds.top+wallBounds.height
-//                        /*&&  playerBounds.left< wallBounds.left+wallBounds.width
-//                        &&  playerBounds.left+ playerBounds.width> wallBounds.left*/)
-//                std::cout<<"Przed  "<<Player_Box[0].getPosition().y<<std::endl;
-//                if(playerBounds.top+playerBounds.height> wallBounds.top)
-//                {
-//                    if(!Colision_y)
-//                    {
-//                        Colision_y=true;
-//                        std::cout<<"Gowno"<<std::endl;
-
-//                        isJumping=0;
-//                        onFloor=1;
-//                        gravity =0;
-//                        Time = 0;
-//                        velocity.y=0.f;
-//                        Player_Box[0].setPosition(Player_Box[0].getPosition().x, wallBounds.top- playerBounds.height-50);
-//                    }
-
-
-//                }
-
-
-//                //                else if(playerBounds.top > wallBounds.top
-//                        &&  playerBounds.top+playerBounds.height> wallBounds.top+wallBounds.height
-//                        )
-//                else if(playerBounds.top< wallBounds.top+wallBounds.height)
-//                {
-//                    velocity.y= 0.f ;
-//                    Player_Box[0].setPosition(Player_Box[0].getPosition().x, wallBounds.top+ wallBounds.height);
-
-//                }
-
-//                else if (playerBounds.left+playerBounds.width>wallBounds.left)
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left, Player_Box[0].getPosition().y);
-//                    onFloor=0;
-//                }
-//                else if (playerBounds.left<wallBounds.left+wallBounds.width)
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left+wallBounds.width, Player_Box[0].getPosition().y);
-//                    onFloor=0;
-//                }
-//            }
-//            else Colision_y =0, onFloor =0;
-
-//        }
-//    }
-
-//    if(onFloor==0)
-//    {
-
-//        Time +=Second;
-//        gravity +=(gravity_const  *Time*Time)/2;
-
-//        velocity.y += (gravity)*Second;
-
-//        for(auto &i : GroudBounds){
-//            sf::FloatRect playerBounds = Player_Box[0].getGlobalBounds();
-//            sf::FloatRect wallBounds = i;
-//            GroundDetection= playerBounds;
-//            GroundDetection.left += velocity.x;
-//            GroundDetection.top += velocity.y;
-
-//            if(wallBounds.intersects(GroundDetection))
-//            {
-
-//                if(playerBounds.top < wallBounds.top
-//                        &&  playerBounds.top+playerBounds.height< wallBounds.top+wallBounds.height
-//                        /*&&  playerBounds.left< wallBounds.left+wallBounds.width
-//                       &&  playerBounds.left+ playerBounds.width> wallBounds.left*/)
-//                if(playerBounds.top+playerBounds.height> wallBounds.top)
-//                {
-//                    if(!Colision_y)
-//                    {
-//                        Colision_y=true;
-
-//                        isJumping=0;
-//                        onFloor=1;
-//                        gravity =0;
-//                        Time = 0;
-//                        velocity.y=0.f;
-//                        Player_Box[0].setPosition(Player_Box[0].getPosition().x, wallBounds.top-playerBounds.height);
-//                    }
-
-//                }
-//                else if(playerBounds.top > wallBounds.top
-//                        &&  playerBounds.top+playerBounds.height> wallBounds.top+wallBounds.height
-//                        )
-//                else if(playerBounds.top< wallBounds.top+wallBounds.height)
-//                {
-//                    velocity.y= 0.f ;
-//                    Player_Box[0].setPosition(Player_Box[0].getPosition().x, wallBounds.top+ wallBounds.height);
-
-//                }
-
-//                else if (playerBounds.left+playerBounds.width>wallBounds.left)
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left, Player_Box[0].getPosition().y);
-//                    onFloor=0;
-//                }
-//                else if (playerBounds.left<wallBounds.left+wallBounds.width)
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left+wallBounds.width, Player_Box[0].getPosition().y);
-//                    onFloor=0;
-//                }
-//            }
-
-
-//            else Colision_y =0, onFloor =0;
-
-
-//        }
-//    }
-
-
-
-
-
-
-
-
-//        sf::FloatRect NextPos;
-
-//        for(auto &i : GroudBounds)
-//        {
-//            sf::FloatRect playerBounds = Player_Box[0].getGlobalBounds();
-//            sf::FloatRect wallBounds = i;
-//            NextPos= playerBounds;
-//            NextPos.left += velocity.x;
-//            NextPos.top += velocity.y;
-
-//            if(wallBounds.intersects(NextPos))
-//            {
-//                if(playerBounds.left < wallBounds.left
-//                        &&  playerBounds.left+playerBounds.width< wallBounds.left+wallBounds.width)
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left- playerBounds.width, playerBounds.top);
-
-//                }
-
-//                else if(playerBounds.left > wallBounds.left
-//                        &&  playerBounds.left+playerBounds.width> wallBounds.left+wallBounds.width)
-
-//                {
-//                    velocity.x=0.f;
-//                    Player_Box[0].setPosition(wallBounds.left+ wallBounds.width, playerBounds.top);
-
-//                }
-//            }
-//        }
-
+    Player_Box[0].move(velocity);
+    Time_after_jump+=Second;
 
 }
 

@@ -12,6 +12,7 @@ int main()
     int screen_width = 1920;
 
     sf::RenderWindow window(sf::VideoMode(screen_width, screen_height), "Sky Is The Limit");
+    window.setFramerateLimit(120);
     sf::Clock deltaClock;
 
     Player p1;

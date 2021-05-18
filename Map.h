@@ -20,6 +20,8 @@ public:
     std::vector<sf::RectangleShape> Walls;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     Level_Walls();
-    std::vector<sf::FloatRect> WallBound();
+    sf::FloatRect LeftWallBound();
+    sf::FloatRect RightWallBound();
+    sf::FloatRect BottomWallBound();
 
 };

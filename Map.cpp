@@ -72,8 +72,8 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
 
 Level_Walls::Level_Walls()
 {
-    sf::RectangleShape Floor (sf::Vector2f(32*grid_size,grid_size));
-    Floor.setPosition(0.f,1030.f);
+    sf::RectangleShape Floor (sf::Vector2f(30*grid_size,grid_size));
+    Floor.setPosition(60.f,1020.f);
 
     sf::RectangleShape Wall_left (sf::Vector2f(grid_size,18*grid_size));
     Wall_left.setPosition(0,0.f);
@@ -94,17 +94,18 @@ Level_Walls::Level_Walls()
 
 
 }
-std::vector<sf::FloatRect> Level_Walls::WallBound()
+
+sf::FloatRect Level_Walls::RightWallBound()
 {
-    std::vector<sf::FloatRect> CakeIsALie{};
-    for(auto &i : Walls)
-    {
-        sf::FloatRect wallBounds = i.getGlobalBounds();
-        CakeIsALie.push_back(wallBounds);
-
-
-    }
-    return CakeIsALie;
+    return Walls[2].getGlobalBounds();
+}
+sf::FloatRect Level_Walls::LeftWallBound()
+{
+    return Walls[1].getGlobalBounds();
+}
+sf::FloatRect Level_Walls::BottomWallBound()
+{
+    return Walls[0].getGlobalBounds();
 }
 
 

@@ -15,9 +15,13 @@ int main()
     window.setFramerateLimit(120);
     sf::Clock deltaClock;
 
+
+
     Player p1;
     Level_Platforms p2;
     Level_Walls p3;
+    Player_Texture p4;
+
 
     while (window.isOpen()) {
 
@@ -31,13 +35,15 @@ int main()
 
 
         p1.Movement(Second);
+        p4.Movement_T(p1.Position(), Second); // player tracking for texture
 
 
         window.clear(sf::Color::Black);
         window.draw(p1);
         window.draw(p2);
         window.draw(p3);
-        //player.drawTo(window);
+        window.draw(p4);
+
 
         window.display();
     }

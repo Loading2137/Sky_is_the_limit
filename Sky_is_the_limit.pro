@@ -8,8 +8,8 @@ SOURCES += \
         Map.cpp \
         Player.cpp \
         main.cpp
-        INCLUDEPATH += "SFML-2.5.1/include"
-        LIBS += -L"SFML-2.5.1/lib"
+        INCLUDEPATH += "$$PWD/SFML-2.5.1/include"
+        LIBS += -L"$$PWD/SFML-2.5.1/lib"
         CONFIG(debug, debug|release){
         LIBS += -lsfml-audio-d -lsfml-graphics-d -lsfml-network-d -lsfml-system-d -lsfml-window-d
         } else {

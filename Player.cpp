@@ -6,9 +6,9 @@
 #include <Map.h>
 #include <Colision.h>
 
-
 Level_Platforms p1;
 Level_Walls p2;
+Player_Animation p3;
 std::vector<sf::FloatRect>PlatformBounds = p1.PlatformBounds();
 sf::FloatRect BottomWall = p2.BottomWallBound();
 sf::FloatRect LeftWall = p2.LeftWallBound();
@@ -23,22 +23,82 @@ bool onFloor =0;
 float Time = 0;
 float gravity = gravity_const;
 
-
-//bool Colision_y=0;
-
-
-
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(Player_Box[0], states);
 }
+void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    target.draw(Texture_Box[0], states);
+}
 Player::Player()
 {
-    sf::RectangleShape Player(sf::Vector2f(80.f,80.f));
+    sf::RectangleShape Player(sf::Vector2f(32.f,64.f));
     Player.setPosition(sf::Vector2f(1200.f,900.f));
     Player_Box.push_back(Player);
+}
+Player_Texture::Player_Texture()
+{
+    sf::Sprite Player;
+    Texture.loadFromFile("Player-Sheet.png");
+    Player.setTexture(Texture);
+    Player.setScale(4,4);
+    Player.setPosition(sf::Vector2f(1200.f,900.f));
+    Texture_Box.push_back(Player);
+}
+Player_Animation::Player_Animation()
+{
+   idleAnimation.push_back(sf::IntRect(28, 0, 8, 16));
+   idleAnimation.push_back(sf::IntRect(92, 0, 8, 16));
+   idleAnimation.push_back(sf::IntRect(156, 0, 8, 16));
+   idleAnimation.push_back(sf::IntRect(220, 0, 8, 16));
+
+   runningAnimation.push_back(sf::IntRect(280, 0, 12, 16));
+   runningAnimation.push_back(sf::IntRect(345, 0, 10, 16));
+   runningAnimation.push_back(sf::IntRect(411, 0, 8, 16));
+   runningAnimation.push_back(sf::IntRect(474, 0, 10, 16));
+
+   jumpingAnimation.push_back(sf::IntRect(541, 0, 6, 16));
+   jumpingAnimation.push_back(sf::IntRect(603, 0, 10, 16));
+   jumpingAnimation.push_back(sf::IntRect(667, 0, 10, 16));
+
+
+   Falling_frame.push_back(sf::IntRect(667, 0, 10, 16));
+}
+
+
+sf::IntRect Player_Animation::getCurrentRect()
+{
+    return runningAnimation[3];
+}
+
+void Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::IntRect> frames)
+{
+        float time_between_frames=1.f/animation_fps;
+
+        Time = Time + Second;
+
+
+        if(Time>time_between_frames)
+        {
+            Current_frame++;
+            Time= Time- time_between_frames;
+            if(Current_frame ==4)//frames.size())
+            {
+                Current_frame=0;
+            }
+        }
+}
+
+void Player_Texture::Movement_T(sf::Vector2f position, float Second)
+{
+        animation.step(Second, 7);
+        Player_Texture();
+        Texture_Box[0].setTextureRect(animation.getCurrentRect());
+        Texture_Box[0].setPosition(position);
 
 }
+
 void Player::Movement(float Second)
 {
 
@@ -58,11 +118,11 @@ void Player::Movement(float Second)
 
     if((sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) ){
         isJumping=1;
-        onFloor=0;       
+        onFloor=0;
     }
 
     if(isJumping)       // when jumping
-    { 
+    {
         Time +=Second;
         gravity +=(gravity_const *Time*Time)/2.f;
         velocity.y +=(jump_speed+ gravity)*Second;
@@ -253,7 +313,10 @@ void Player::Movement(float Second)
 
     Player_Box[0].move(velocity);
 }
-
+sf::Vector2f Player::Position()
+{
+    return Player_Box[0].getPosition();
+}
 
 
 

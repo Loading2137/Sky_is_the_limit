@@ -29,7 +29,7 @@ Level_Platforms::Level_Platforms()
 {
 
     sf::RectangleShape Platform1 (sf::Vector2f(6*grid_size,grid_size));
-    Platform1.setPosition(350.f,700.f);
+    Platform1.setPosition(0.f,700.f);
 
     sf::RectangleShape Platform2 (sf::Vector2f(6.5*grid_size,grid_size));
     Platform2.setPosition(180.f,600.f);

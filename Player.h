@@ -27,7 +27,7 @@ class Player    :public sf::Drawable
 public:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     Player();
-    void Movement(float Second);
+    void Movement(float Second, int window_value);
     sf::Vector2f Position();
     sf::Texture Player_Texture();
 

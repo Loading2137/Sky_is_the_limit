@@ -99,219 +99,237 @@ void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 
 }
 
-void Player::Movement(float Second)
+void Player::Movement(float Second, int window_value)
 {
-
-    sf::Vector2f velocity;
-    velocity.x=0.f;
-    velocity.y=0.f;
-    sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
-
-    float movement_speed = 400.f;
-
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-        velocity.x += -movement_speed*Second;
-    }
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-        velocity.x += movement_speed*Second;
-    }
-
-    if((sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) ){
-        isJumping=1;
-        onFloor=0;
-    }
-
-    if(isJumping)       // when jumping
+    if(window_value==6)
     {
-        Time +=Second;
-        gravity +=(gravity_const *Time*Time)/2.f;
-        velocity.y +=(jump_speed+ gravity)*Second;
+        sf::Vector2f velocity;
+        velocity.x=0.f;
+        velocity.y=0.f;
+        sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
 
-        for(auto &i : PlatformBounds)
+        float movement_speed = 400.f;
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            velocity.x += -movement_speed*Second;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            velocity.x += movement_speed*Second;
+        }
+
+        if((sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) ){
+            isJumping=1;
+            onFloor=0;
+
+
+
+        }
+
+        if(isJumping)       // when jumping
         {
-            sf::FloatRect wallBounds = i;
 
-            if(wallBounds.intersects(PlayerBounds))
+            Time +=Second;
+            velocity.y=-1200.f*Second;
+            std::cout<<Time<<std::endl;
+            if(Time>1.f)
             {
-
-                if(PlayerBounds.top < wallBounds.top
-                        &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                {
-                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
-                    velocity.y=0.f;
-                    onFloor=1;
-                    isJumping=0;
-                    Time = 0;
-                    gravity =0;
-                }
-
-                else if(PlayerBounds.top > wallBounds.top
-                        &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                {
-                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
-                    velocity.y=0.f;
-                }
-
-                else if(PlayerBounds.left < wallBounds.left
-                        &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                {
-                    velocity.x=0.f;
-                }
-
-                else if(PlayerBounds.left > wallBounds.left
-                        &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                {
-                    velocity.x=0.f;
-                }
-                else onFloor =0;
+                isJumping=0;
+                velocity.y=1200.f*Second;
+                Time=0;
             }
-        }
 
-        //Wall colision
 
-        //Bottom collisions
-        if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
-        {
-            Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
-            onFloor=1;
-            isJumping=0;
-            gravity =0;
-            Time = 0;
+            //            gravity +=(gravity_const *Time*Time)/2.f;
+            //            velocity.y +=(jump_speed+ gravity_const)*Second;
 
-            velocity.y=0.f;
-        }
-        //Left collision
-        else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
-        {
-            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-            velocity.x=0.f;
-        }
-        //Right collision
-        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-        {
-            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-            velocity.x=0.f;
-        }
-        else onFloor =0;
-    }
 
-    if(!onFloor)    //collisions when in air/not on floor
-    {
-        Time +=Second;
-        gravity +=(gravity_const *Time*Time)/2.f;
-        velocity.y += gravity*Second;
-
-        for(auto &i : PlatformBounds)       //collions with platforms
-        {
-            sf::FloatRect wallBounds = i;
-
-            if(wallBounds.intersects(PlayerBounds))
+            for(auto &i : PlatformBounds)
             {
+                sf::FloatRect wallBounds = i;
 
-                if(PlayerBounds.top < wallBounds.top
-                        &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
+                if(wallBounds.intersects(PlayerBounds))
                 {
-                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
-                    velocity.y=0.f;
-                    onFloor=1;
-                    isJumping=0;
-                    gravity =0;
-                    Time = 0;
 
+                    if(PlayerBounds.top < wallBounds.top
+                            &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                    {
+                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
+                        velocity.y=0.f;
+                        onFloor=1;
+                        isJumping=0;
+                        Time = 0;
+                        gravity =0;
+                    }
+
+                    else if(PlayerBounds.top > wallBounds.top
+                            &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                    {
+                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
+                        velocity.y=0.f;
+                    }
+
+                    else if(PlayerBounds.left < wallBounds.left
+                            &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                    {
+                        velocity.x=0.f;
+                    }
+
+                    else if(PlayerBounds.left > wallBounds.left
+                            &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                    {
+                        velocity.x=0.f;
+                    }
+                    else onFloor =0;
                 }
-
-                else if(PlayerBounds.top > wallBounds.top
-                        &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                {
-                    Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
-                    velocity.y=0.f;
-                }
-
-                else if(PlayerBounds.left < wallBounds.left
-                        &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                {
-                    velocity.x=0.f;
-                }
-
-                else if(PlayerBounds.left > wallBounds.left
-                        &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
-                        &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                        &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                {
-                    velocity.x=0.f;
-                }
-                else onFloor =0;
             }
+
+            //Wall colision
+
+            //Bottom collisions
+            if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
+            {
+                Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
+                onFloor=1;
+                isJumping=0;
+                gravity =0;
+                Time = 0;
+
+                velocity.y=0.f;
+            }
+            //Left collision
+            else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+            {
+                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            //Right collision
+            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+            {
+                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            else onFloor =0;
         }
 
-        //Wall colisions
+        if(!onFloor)    //collisions when in air/not on floor
+        {
+            Time +=Second;
+            gravity +=(gravity_const *Time*Time)/2.f;
+            velocity.y += gravity*Second;
+            //velocity.y=1200.f*Second;
 
-        //Bottom collisions
-        if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
-        {
-            Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
-            onFloor=1;
-            isJumping=0;
-            gravity =0;
-            Time = 0;
-            velocity.y=0.f;
+            for(auto &i : PlatformBounds)       //collions with platforms
+            {
+                sf::FloatRect wallBounds = i;
+
+                if(wallBounds.intersects(PlayerBounds))
+                {
+
+                    if(PlayerBounds.top < wallBounds.top
+                            &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                    {
+                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
+                        velocity.y=0.f;
+                        onFloor=1;
+                        isJumping=0;
+                        gravity =0;
+                        Time = 0;
+
+                    }
+
+                    else if(PlayerBounds.top > wallBounds.top
+                            &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
+
+                    {
+                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
+                        velocity.y=0.f;
+                    }
+
+                    else if(PlayerBounds.left < wallBounds.left
+                            &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                    {
+                        velocity.x=0.f;
+                    }
+
+                    else if(PlayerBounds.left > wallBounds.left
+                            &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
+                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
+                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
+
+                    {
+                        velocity.x=0.f;
+                    }
+                    else onFloor =0;
+                }
+            }
+
+            //Wall colisions
+
+            //Bottom collisions
+            if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
+            {
+                Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
+                onFloor=1;
+                isJumping=0;
+                gravity =0;
+                Time = 0;
+                velocity.y=0.f;
+            }
+            //Left collision
+            else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+            {
+                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            //Right collision
+            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+            {
+                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            else onFloor =0;
         }
-        //Left collision
-        else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+
+        if(onFloor)     //collisions with walls when on floor
         {
-            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-            velocity.x=0.f;
+
+            //Left collision
+            if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
+            {
+                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            //Right collision
+            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
+            {
+                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
+                velocity.x=0.f;
+            }
+            else onFloor =0;
         }
-        //Right collision
-        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-        {
-            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-            velocity.x=0.f;
-        }
-        else onFloor =0;
+
+        Player_Box[0].move(velocity);
     }
-
-    if(onFloor)     //collisions with walls when on floor
-    {
-
-        //Left collision
-        if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
-        {
-            Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-            velocity.x=0.f;
-        }
-        //Right collision
-        else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-        {
-            Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-            velocity.x=0.f;
-        }
-        else onFloor =0;
-    }
-
-    Player_Box[0].move(velocity);
 }
 sf::Vector2f Player::Position()
 {

@@ -3,25 +3,67 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <fstream>
+#include <string>
+#include <stdlib.h>
 #include <Player.h>
 #include <Map.h>
 
 int main()
 {
+    int number_of_saves = 0;
+    int screen_width;
+    int screen_height;
+    double scale_factor;
 
     std::fstream Save1;
-    Save1.open( "Save1", std::ios::out );
+    Save1.open( "Save1" );
     std::fstream Save2;
-    Save2.open( "Save2", std::ios::out );
+    Save2.open( "Save2");
     std::fstream Save3;
-    Save3.open( "Save3", std::ios::out );
+    Save3.open( "Save3");
 
-    int screen_width = 1920;
-    int screen_height = 1080;
-    double scale_factor = 1;
+    if(Save1)
+    {
+        std::cout<<"file exists";
+    }
+    else
+    {
+        std:: cout<<"file doesn't exist";
+        Save1.open("Save1", std::ios::out );
+        number_of_saves=1;
+        Save1<<1920<<std::endl; //screen width
+        Save1<<1080<<std::endl; //screen hight
+        Save1<<1<<std::endl;    //scale factor
+
+
+    }
+    Save1.close();
+
+    Save1.open("Save1");
+
+
+    std::string linia ;
+    int nr_lini=1;
+    for(int i = 0; i<3; i++)
+    {
+        std::getline(Save1, linia);
+        switch (nr_lini)
+        {
+        case 1: screen_width = atoi(linia.c_str()); break;
+        case 2: screen_height = atoi(linia.c_str()); break;
+        case 3: scale_factor =atof (linia.c_str()); break;
+        }
+        nr_lini++;
+    }
+    Save1.close();
+    std::cout<<screen_width<<std::endl;
+    std::cout<<screen_height<<std::endl;
+    std::cout<<scale_factor<<std::endl;
+
     int window_value=1;
     int first_save=1;       //will be read from only Save1
     float Time = 0;
+
 
     sf::RenderWindow window(sf::VideoMode(screen_width, screen_height), "Sky Is The Limit");
     window.setFramerateLimit(120);
@@ -38,6 +80,11 @@ int main()
 //    value 1
 
 
+    sf::Vector2f Top (scale_factor*200.0, scale_factor*200.0);
+    sf::Vector2f Middle (scale_factor*200.0, scale_factor*500.0);
+    sf::Vector2f Bottom (scale_factor*200.0, scale_factor*800.0);
+    sf::Vector2f Common_scale (scale_factor*2,scale_factor*2);
+
 //#####################################################################################
 //Main menu
 
@@ -50,25 +97,25 @@ int main()
 
     Background_Texture.loadFromFile("screen.jpg");
     Background.setTexture(Background_Texture);
-    Background.setScale(1,1);
+    Background.setScale(scale_factor*1,scale_factor*1);
 
     sf::Sprite Start;
-    Start.setPosition(200.0, 200.0);
+    Start.setPosition (Top);
     Start_Texture.loadFromFile("Start 192x48.png");
     Start.setTexture(Start_Texture);
-    Start.setScale(2,2);
+    Start.setScale(Common_scale);
 
     sf::Sprite Settings;
-    Settings.setPosition(200.0, 500.0);
+    Settings.setPosition(Middle);
     Settings_Texture.loadFromFile("Settings 192x48.png");
     Settings.setTexture(Settings_Texture);
-    Settings.setScale(2,2);
+    Settings.setScale(Common_scale);
 
     sf::Sprite Exit_Game;
-    Exit_Game.setPosition(200.0, 800.0);
+    Exit_Game.setPosition(Bottom);
     Exit_Game_Texture.loadFromFile("Quit Game 192x48.png");
     Exit_Game.setTexture(Exit_Game_Texture);
-    Exit_Game.setScale(2,2);
+    Exit_Game.setScale(Common_scale);
 
 
 //#####################################################################################
@@ -78,22 +125,22 @@ int main()
     sf::Texture Continue_Game_Texture;
 
     sf::Sprite Load;
-    Load.setPosition(200.0, 500.0);
+    Load.setPosition(Middle);
     Load_Texture.loadFromFile("Load 192x48.png");
     Load.setTexture(Load_Texture);
-    Load.setScale(2,2);
+    Load.setScale(Common_scale);
 
     sf::Sprite New_Game;
-    New_Game.setPosition(200.0, 200.0);
+    New_Game.setPosition(Top);
     New_Game_Texture.loadFromFile("New Game 192x48.png");
     New_Game.setTexture(New_Game_Texture);
-    New_Game.setScale(2,2);
+    New_Game.setScale(Common_scale);
 
     sf::Sprite Continue_Game;
-    New_Game.setPosition(200.0, 200.0);
+    New_Game.setPosition(Top);
     Continue_Game_Texture.loadFromFile("Continue Game 192x48.png");
     New_Game.setTexture(Continue_Game_Texture);
-    New_Game.setScale(2,2);
+    New_Game.setScale(Common_scale);
 
 
 //#####################################################################################
@@ -104,22 +151,22 @@ int main()
     sf::Texture Exit_Texture;
 
     sf::Sprite Audio;
-    Audio.setPosition(200.0, 200.0);
+    Audio.setPosition(Top);
     Audio_Texture.loadFromFile("Audio 192x48.png");
     Audio.setTexture(Audio_Texture);
-    Audio.setScale(2,2);
+    Audio.setScale(Common_scale);
 
     sf::Sprite Graphics;
-    Graphics.setPosition(200.0, 500.0);
+    Graphics.setPosition(Middle);
     Graphics_Texture.loadFromFile("Graphics 192x48.png");
     Graphics.setTexture(Graphics_Texture);
-    Graphics.setScale(2,2);
+    Graphics.setScale(Common_scale);
 
     sf::Sprite Exit;
-    Exit.setPosition(200.0, 800.0);
+    Exit.setPosition(Bottom);
     Exit_Texture.loadFromFile("Exit 192x48.png");
     Exit.setTexture(Exit_Texture);
-    Exit.setScale(2,2);
+    Exit.setScale(Common_scale);
 
 //#####################################################################################
 //Graphics Menu
@@ -129,22 +176,22 @@ int main()
     sf::Texture RTX_Texture;
 
     sf::Sprite Window_Resize;
-    Window_Resize.setPosition(200.0, 200.0);
+    Window_Resize.setPosition(Top);
     Window_Resize_Texture.loadFromFile("Window Resize.png");
     Window_Resize.setTexture(Window_Resize_Texture);
-    Window_Resize.setScale(2,2);
+    Window_Resize.setScale(Common_scale);
 
     sf::Sprite Toggle1;
-    Toggle1.setPosition(200.0, 400.0);
+    Toggle1.setPosition(scale_factor*200.0,scale_factor*420.0);
     Toggle_Texture.loadFromFile("img_522367.png");
     Toggle1.setTexture(Toggle_Texture);
-    Toggle1.setScale(0.2,0.2);
+    Toggle1.setScale(scale_factor*0.2,scale_factor*0.2);
 
     sf::Sprite Toggle2;
-    Toggle2.setPosition(200.0, 575.0);
+    Toggle2.setPosition(scale_factor*200.0,scale_factor*575.0);
     RTX_Texture.loadFromFile("rtx.png");
     Toggle2.setTexture(RTX_Texture);
-    Toggle2.setScale(2,2);
+    Toggle2.setScale(Common_scale);
 
     std::vector<sf::IntRect> Toggle_Position;
 
@@ -164,28 +211,28 @@ int main()
     sf::Texture r2560t;
 
     sf::Sprite r720;
-    r720.setPosition(200.0, 200.0);
+    r720.setPosition(Top);
     r720t.loadFromFile("720.png");
     r720.setTexture(r720t);
-    r720.setScale(2,2);
+    r720.setScale(Common_scale);
 
     sf::Sprite r1280;
-    r1280.setPosition(200.0, 500.0);
+    r1280.setPosition(Middle);
     r1280t.loadFromFile("1280.png");
     r1280.setTexture(r1280t);
-    r1280.setScale(2,2);
+    r1280.setScale(Common_scale);
 
     sf::Sprite r1920;
-    r1920.setPosition(850.0, 200.0);
+    r1920.setPosition(scale_factor*850.0, scale_factor*200.0);
     r1920t.loadFromFile("1920.png");
     r1920.setTexture(r1920t);
-    r1920.setScale(2,2);
+    r1920.setScale(Common_scale);
 
     sf::Sprite r2560;
-    r2560.setPosition(850.0, 500.0);
+    r2560.setPosition(scale_factor*850.0, scale_factor*500.0);
     r2560t.loadFromFile("2560.png");
     r2560.setTexture(r2560t);
-    r2560.setScale(2,2);
+    r2560.setScale(Common_scale);
 
 //#####################################################################################
     Player p1;
@@ -205,10 +252,12 @@ int main()
         }
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
-            mouse_pos.x = mouse_pos.x/scale_factor;
-            mouse_pos.y = mouse_pos.y/scale_factor;
+           // sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+        sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
+            mouse_pos.x = mouse_pos.x;//scale_factor;
+            mouse_pos.y = mouse_pos.y;//scale_factor;
+            std::cout<<mouse_pos.x<<"  "<<mouse_pos.y<<std::endl;
             //Load menu
             if(mouse_pos.x>= Start.getGlobalBounds().left &&
                     mouse_pos.x<= Start.getGlobalBounds().left+Start.getGlobalBounds().width &&
@@ -256,6 +305,17 @@ int main()
             {
                 if(!Mouse_pressed)
                 {
+                    if(number_of_saves<2)
+                    {
+                        std::cout<<screen_width<<std::endl;
+                        std::cout<<screen_height<<std::endl;
+                        std::cout<<scale_factor<<std::endl;
+                        Save1.open("Save1", std::ios::out);
+                        Save1<<screen_width<<std::endl;
+                        Save1<<screen_height<<std::endl;
+                        Save1<<scale_factor<<std::endl;
+                        Save1.close();
+                    }
                 return 0;
                 }
             }
@@ -402,8 +462,7 @@ int main()
                 window_value=4;
                 screen_width = 2560;
                 screen_height = 1440 ;
-                scale_factor=1.3333333333333333333333333333333;
-                // wiem że moge to zapisać 1+(1/3) ale nie.
+                scale_factor=1.3333;
                 }
             }
 
@@ -431,7 +490,8 @@ int main()
         float Second = Delta.asSeconds();
 
         Time+=Time+Second;
-        p1.Movement(Second, window_value);
+        //p1.Movement(Second, window_value);
+        p1.Movement_Again(Second, window_value);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
 
         window.clear(sf::Color::Black);
@@ -479,7 +539,7 @@ int main()
             window.draw(Exit);
         }
 
-        else if(window_value==6)
+        else if(window_value==6)        //actual game
         {
             window.draw(p1);
             window.draw(p2);
@@ -496,6 +556,9 @@ int main()
 
         window.display();
     }
+
+
+
 
 
     return 0;

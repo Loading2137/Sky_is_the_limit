@@ -25,3 +25,12 @@ public:
     sf::FloatRect BottomWallBound();
 
 };
+
+class BackGround :public sf::Drawable
+{
+    sf::Sprite BackGround_T;
+public:
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    BackGround();
+    sf::Texture BackGround_Texture;
+};

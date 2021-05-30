@@ -7,15 +7,16 @@ class Player_Animation
     std::vector<sf::IntRect> idleAnimation;
     std::vector<sf::IntRect> runningAnimation;
     std::vector<sf::IntRect> jumpingAnimation;
-    std::vector<sf::IntRect> Falling_frame;
+
 
 public:
 
 
     Player_Animation();
-    void step(float delta, int animation_fps);
+    int step(float delta, int animation_fps);
+    int jump(float delta, int animation_fps);
     int Current_frame=0;
-    sf::IntRect getCurrentRect();
+    sf::IntRect getCurrentRect(int Current_frame);
 
 };
 

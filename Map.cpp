@@ -24,6 +24,10 @@ void Level_Walls::draw(sf::RenderTarget &target, sf::RenderStates states) const
         target.draw(Walls[i],states);
     }
 }
+void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    target.draw(BackGround_T);
+}
 
 Level_Platforms::Level_Platforms()
 {
@@ -108,5 +112,11 @@ sf::FloatRect Level_Walls::BottomWallBound()
     return Walls[0].getGlobalBounds();
 }
 
-
+BackGround::BackGround()
+{
+    BackGround_Texture.loadFromFile("Biel.png");
+    BackGround_Texture.setRepeated(true);
+    BackGround_T.setTexture(BackGround_Texture);
+    BackGround_T.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
+}
 

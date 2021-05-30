@@ -239,6 +239,7 @@ int main()
     Level_Platforms p2;
     Level_Walls p3;
     Player_Texture p4;
+    BackGround p5;
 
 
     while (window.isOpen()) {
@@ -542,9 +543,11 @@ int main()
         else if(window_value==6)        //actual game
         {
             window.draw(p1);
+            window.draw(p5);
             window.draw(p2);
             window.draw(p3);
             window.draw(p4);
+
         }
         else if (window_value==7)
         {

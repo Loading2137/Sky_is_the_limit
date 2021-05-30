@@ -14,10 +14,16 @@ sf::FloatRect BottomWall = p2.BottomWallBound();
 sf::FloatRect LeftWall = p2.LeftWallBound();
 sf::FloatRect RightWall = p2.RightWallBound();
 
+bool left=0;
+int jump_frames=0;
+
 //Gravity
 const float jump_speed = -1200.f;
 const float movement_speed = 400.f;
 const float gravity_const = 20.f;
+
+sf::Vector2f velocity;
+int ground_level=1000;
 
 bool isJumping =0;
 bool onFloor =0;
@@ -60,20 +66,32 @@ Player_Animation::Player_Animation()
    runningAnimation.push_back(sf::IntRect(474, 0, 10, 16));
 
    jumpingAnimation.push_back(sf::IntRect(541, 0, 6, 16));
-   jumpingAnimation.push_back(sf::IntRect(603, 0, 10, 16));
    jumpingAnimation.push_back(sf::IntRect(667, 0, 10, 16));
 
-
-   Falling_frame.push_back(sf::IntRect(667, 0, 10, 16));
 }
 
 
-sf::IntRect Player_Animation::getCurrentRect()
+sf::IntRect Player_Animation::getCurrentRect(int Current_frame)
 {
-    return runningAnimation[3];
+    if(isJumping && velocity.y<0)
+    {
+        return jumpingAnimation[0];
+    }
+    else if(velocity.y>0.f )
+    {
+        return jumpingAnimation[1];
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)|| sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {
+        return runningAnimation[Current_frame];
+    }
+    else if(!(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
+    {
+        return idleAnimation[Current_frame];
+    }
 }
 
-void Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::IntRect> frames)
+int Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::IntRect> frames)
 {
         float time_between_frames=1.f/animation_fps;
 
@@ -89,14 +107,48 @@ void Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf:
                 Current_frame=0;
             }
         }
+        return Current_frame;
 }
+
+
 
 void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 {
-        animation.step(Second, 7);
+
         Player_Texture();
-        Texture_Box[0].setTextureRect(animation.getCurrentRect());
+        Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
         Texture_Box[0].setPosition(position);
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        {
+
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+        }
+
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+            left=0;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+            left=1;
+        }
+
+        if(left)
+        {
+            Texture_Box[0].setScale(-4,4);
+            Texture_Box[0].setPosition(position.x+32.f, position.y);
+        }
+        if(!left)
+        {
+            Texture_Box[0].setScale(4,4);
+            Texture_Box[0].setPosition(position.x-2.f, position.y);
+        }
+
 
 }
 
@@ -336,8 +388,7 @@ sf::Vector2f Player::Position()
 {
     return Player_Box[0].getPosition();
 }
-sf::Vector2f velocity;
-int ground_level=1000;
+
 void Player::Movement_Again(float Second, int window_value)
 {
 
@@ -366,6 +417,7 @@ void Player::Movement_Again(float Second, int window_value)
             velocity.y=0.f;
             isJumping=0;
         }
+        std::cout<<velocity.y<<std::endl;
         Player_Box[0].move(velocity*Second);
     }
 

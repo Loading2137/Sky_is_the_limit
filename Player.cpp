@@ -15,8 +15,9 @@ sf::FloatRect LeftWall = p2.LeftWallBound();
 sf::FloatRect RightWall = p2.RightWallBound();
 
 //Gravity
-float jump_speed = -1200.f;
-const float gravity_const = 80.f;
+const float jump_speed = -1200.f;
+const float movement_speed = 400.f;
+const float gravity_const = 20.f;
 
 bool isJumping =0;
 bool onFloor =0;
@@ -339,42 +340,34 @@ sf::Vector2f velocity;
 int ground_level=1000;
 void Player::Movement_Again(float Second, int window_value)
 {
-    float movement_speed=400.f;
 
+    if(window_value==6)
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            velocity.x = -movement_speed;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            velocity.x = movement_speed;
+        }
+        else
+            velocity.x=0.f;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0) {
+            velocity.y =jump_speed;
+            isJumping=1;
+        }
 
-    const float gravity_const = 20.f;
-   if(window_value==6)
-   {
-       if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-           velocity.x = -movement_speed;
-       }
-       else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-           velocity.x = movement_speed;
-       }
-       else
-           velocity.x=0.f;
-      if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0) {
-           velocity.y = -1400.f;
-           isJumping=1;
-       }
-
-      if(Player_Box[0].getGlobalBounds().top+Player_Box[0].getGlobalBounds().height<ground_level||velocity.y<0)
-      {
+        if(Player_Box[0].getGlobalBounds().top+Player_Box[0].getGlobalBounds().height<ground_level||velocity.y<0)
+        {
             velocity.y += gravity_const;
-      }
-      else
-      {
-          Player_Box[0].setPosition(Player_Box[0].getPosition().x, ground_level-Player_Box[0].getGlobalBounds().height);
+        }
+        else
+        {
+            Player_Box[0].setPosition(Player_Box[0].getPosition().x, ground_level-Player_Box[0].getGlobalBounds().height);
             velocity.y=0.f;
             isJumping=0;
-      }
-
-
-
-
-       Player_Box[0].move(velocity*Second);
-
-   }
+        }
+        Player_Box[0].move(velocity*Second);
+    }
 
 }
 

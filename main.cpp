@@ -68,7 +68,7 @@ int main()
 
 
 
-    int window_value=1;
+    int window_value=6;
     int first_save=1;       //will be read from only Save1
     float Time = 0;
 
@@ -533,8 +533,9 @@ int main()
         //p1.Movement(Second, window_value);
         p6.Sound_movement(window_value);
         p1.Movement_Again(Second, window_value);
-        p4.Movement_T(p1.Position(), Second); // player tracking for texture
         p1.Collisions(Second, window_value);
+        p4.Movement_T(p1.Position(), Second); // player tracking for texture
+
 
 
 

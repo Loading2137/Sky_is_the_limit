@@ -474,30 +474,33 @@ void Player::Movement_Again(float Second, int window_value)
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
             velocity.x = movement_speed;
         }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+            velocity.y = movement_speed/2;
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+            velocity.y = -movement_speed/2;
+        }
         else
+        {
             velocity.x=0.f;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0 && Falling==0) {
+            velocity.y=0.f;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==0 && Falling==0) {
             velocity.y =jump_speed;
 
             isJumping=1;
         }
 
-        if(Player_Box[0].getGlobalBounds().top+Player_Box[0].getGlobalBounds().height<ground_level||velocity.y<0)
-        {
-            velocity.y += gravity_const;
-        }
+            //velocity.y += gravity_const;
+
+
+        //std::cout<<velocity.y<<std::endl;
+
 
         if (velocity.y>20.f )
         {
             Falling=1;
         }
-//        else
-//        {
-//            Player_Box[0].setPosition(Player_Box[0].getPosition().x, ground_level-Player_Box[0].getGlobalBounds().height);
-//            velocity.y=0.f;
-//            isJumping=0;
-//        }
-        //std::cout<<velocity.y<<std::endl;
         Player_Box[0].move(velocity*Second);
     }
 
@@ -505,70 +508,122 @@ void Player::Movement_Again(float Second, int window_value)
 
 void Player::Collisions(float Second,int window_value)
 {
-    sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
     if(window_value==6)
     {
-        for(int i=0; i<Collision_Box.size(); i++)
-        {
-            std::vector<sf::Vector2f> Place_holder;
-            if(PlayerBounds.intersects(Collision_Box[i]))
-            {
-                penetrator_bool.push_back(1);
-            }
-            else penetrator_bool.push_back(0);
-            //bottom and left
-            if(PlayerBounds.top+PlayerBounds.height>Collision_Box[i].top && PlayerBounds.left<Collision_Box[i].left+Collision_Box[i].width)
-            {
-                penetrator_value.push_back(sf::Vector2f (PlayerBounds.top+PlayerBounds.height-Collision_Box[i].top ,PlayerBounds.left-Collision_Box[i].left+Collision_Box[i].width));
-            }
-            //bottom and right
-            if(PlayerBounds.top+PlayerBounds.height>Collision_Box[i].top && PlayerBounds.left+PlayerBounds.width>Collision_Box[i].left)
-            {
-                penetrator_value.push_back(sf::Vector2f (PlayerBounds.top+PlayerBounds.height-Collision_Box[i].top ,PlayerBounds.left-Collision_Box[i].left+Collision_Box[i].width));
-            }
 
-        }
-        sf::Vector2f penetration (0.f, 0.f);
+        sf::Vector2f reaction;
+        sf::FloatRect Player_bounds = Player_Box[0].getGlobalBounds();
         for(auto &i : Collision_Box)
         {
-            if(PlayerBounds.intersects(i))
+
+
+//            std::cout<<"Cokolwiek"<<std::endl;
+
+            sf::Vector2f r =Reaction(i, Player_bounds);
+            if(r != sf::Vector2f (0,0))
             {
-                //std::cout<<"Collision"<<std::endl;
-                if(PlayerBounds.top+PlayerBounds.height>i.top)
-                {
-                    penetration.y=PlayerBounds.top+PlayerBounds.height-i.top;
-                    Player_Box[0].setPosition(Player_Box[0].getPosition().x-penetration.x, Player_Box[0].getPosition().y-penetration.y);
-                    velocity.y=0.f;
-                    isJumping=0;
-                    Falling=0;
-                }
-                else if(PlayerBounds.left<i.left+i.width)
-                {
-                    penetration.x=PlayerBounds.left+i.left+i.width;
-                    Player_Box[0].setPosition(Player_Box[0].getPosition().x+penetration.x,Player_Box[0].getPosition().y+penetration.y);
-                    velocity.x=0;
-                }
-                else if(PlayerBounds.left+PlayerBounds.width>i.left)
-                {
-                    penetration.x=PlayerBounds.left+PlayerBounds.width-i.left;
-                    Player_Box[0].setPosition(Player_Box[0].getPosition().x-penetration.x,Player_Box[0].getPosition().y-penetration.y);
-                    velocity.x=0;
-                }
-
-
-
-
-
+                reaction+=r;
             }
-
 
         }
 
 
-        //std::cout<<isJumping<<"     "<< Falling <<std::endl;
+        Player_Box[0].move(reaction);
+        if(reaction.y<0)
+        {
+            velocity.y=0;
+            isJumping=0;
+            Falling=0;
+        }
+        if(reaction.y>0)
+        {
+            velocity.y=0;
+        }
 
 
     }
 }
 
+sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
+{
+    bool isIntersecting_top=1;      //top of the platform
+    bool isIntersecting_bottom=1;   //bottom of the platform
+    bool isIntersecting_left=1;
+    bool isIntersecting_right=1;
+
+    if(!Platform.intersects(Player))
+    {
+        return {};
+    }
+    std::cout<<"Ladies"<<std::endl;
+    //edges check
+//    if(Platform.top>Player.top+Player.height)   //Player above top edge of platform
+//    {
+//        isIntersecting_top=0;
+//        isIntersecting_left=0;
+//        isIntersecting_right=0;
+//    }
+    if(Platform.top<Player.top)                 //Player below top edge of platform
+    {
+        isIntersecting_top=0;
+    }
+//    if(Platform.left>Player.left+Player.width)  //Player on left side of left platform
+//    {
+//        isIntersecting_top=0;
+//        isIntersecting_bottom=0;
+//        isIntersecting_right=0;
+//    }
+//    if(Platform.left+Platform.width<Player.left)//Player on right side of right platform
+//    {
+//        isIntersecting_top=0;
+//        isIntersecting_bottom=0;
+//        isIntersecting_right=0;
+//    }
+    if(Platform.top+Platform.height>Player.top+Player.height)//Player above bottom edge of platform
+    {
+        isIntersecting_bottom=0;
+    }
+//    if(Platform.top+Platform.height<Player.top)//Player below bottom edge of platform
+//    {
+//       isIntersecting_bottom=0;
+//       isIntersecting_left=0;
+//       isIntersecting_right=0;
+//    }
+    if(Platform.left>Player.left+Player.width)//Player on right side of left platform
+    {
+        isIntersecting_left=0;
+    }
+    if(Platform.left+Platform.width<Player.left)//Player on left side of right platform
+    {
+        isIntersecting_right=0;
+    }
+    //allergic reaction to edges
+    sf::Vector2f reaction;
+    if(isIntersecting_top && isIntersecting_bottom)
+    {
+       std::cout<<"Ladies and gentelman we got it"<<std::endl;
+
+    }
+    else if(isIntersecting_top)
+    {
+        reaction.y = Platform.top-(Player.top+Player.height);
+    }
+    else if(isIntersecting_bottom)
+    {
+        reaction.y = (Platform.top+Platform.height)-Player.top;
+    }
+
+    if (isIntersecting_left)
+    {
+        reaction.x = Platform.left-(Player.left+Player.width);
+    }
+    else if(isIntersecting_right)
+    {
+        reaction.x = (Platform.left+Platform.width)-Player.left;
+    }
+
+    return reaction;
+
+
+}
 

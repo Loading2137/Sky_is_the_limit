@@ -36,6 +36,7 @@ public:
     sf::Texture Player_Texture();
     void Collisions(float Second,int window_value);
     void scale(int scale);
+    sf::Vector2f Reaction(sf::FloatRect Platform, sf::FloatRect Player);
 
 
 

@@ -5,8 +5,19 @@
 #include <Player.h>
 #include <Map.h>
 #include <Colision.h>
+#include <string>
+#include <fstream>
 
-float grid_size=60.f;
+
+
+int screen_width;
+int screen_height;
+double scale_factor;
+
+//void Level_Platforms::scale()
+//{
+//     scale_factor=scale;
+//}
 
 void Level_Platforms::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
@@ -28,12 +39,35 @@ void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(BackGround_T);
 }
-
+float grid_size=60.f;
 Level_Platforms::Level_Platforms()
 {
 
+//    std::fstream Save1;
+
+//    Save1.open("Save1");
+
+//    std::string linia ;
+//    int nr_lini=1;
+//    for(int i = 0; i<3; i++)
+//    {
+//        std::getline(Save1, linia);
+//        switch (nr_lini)
+//        {
+//        case 1: screen_width = atoi(linia.c_str()); break;
+//        case 2: screen_height = atoi(linia.c_str()); break;
+//        case 3: scale_factor =atof (linia.c_str()); break;
+//        }
+//        nr_lini++;
+//    }
+//    Save1.close();
+
+
+
+
     sf::RectangleShape Platform1 (sf::Vector2f(6*grid_size,grid_size));
     Platform1.setPosition(0.f,700.f);
+    Platform1.setFillColor(sf::Color(150,150,150));
 
     sf::RectangleShape Platform2 (sf::Vector2f(6.5*grid_size,grid_size));
     Platform2.setPosition(180.f,600.f);
@@ -41,22 +75,42 @@ Level_Platforms::Level_Platforms()
 
     sf::RectangleShape Platform3 (sf::Vector2f(9*grid_size,grid_size));
     Platform3.setPosition(400.f,380.f);
+    Platform3.setFillColor(sf::Color(150,150,150));
 
     sf::RectangleShape Platform4 (sf::Vector2f(15*grid_size,grid_size));
     Platform4.setPosition(900.f,200.f);
+    Platform4.setFillColor(sf::Color(150,150,150));
 
-    sf::RectangleShape Platform (sf::Vector2f(900.f,grid_size));
-    Platform4.setPosition(900.f,200.f);
+    sf::RectangleShape Platform5 (sf::Vector2f(300.f,grid_size));
+    Platform4.setPosition(900.f,800.f);
+    Platform1.setFillColor(sf::Color(150,150,150));
+
+    sf::RectangleShape Floor (sf::Vector2f(30*grid_size,grid_size));
+    Floor.setPosition(60.f,1020.f);
+    Floor.setFillColor(sf::Color(150,150,150));
+
+    sf::RectangleShape Wall_left (sf::Vector2f(grid_size,18*grid_size));
+    Wall_left.setPosition(0,0.f);
+    Wall_left.setFillColor(sf::Color(150,150,150));
+
+    sf::RectangleShape Wall_right (sf::Vector2f(grid_size,18*grid_size));
+    Wall_right.setPosition(1860.f,0.f);
+    Wall_right.setFillColor(sf::Color(150,150,150));
 
     sf::RectangleShape Phantom (sf::Vector2f(1.f,1.f));
     Phantom.setPosition(1950.f,1200.f);
+
 
 
     Platforms.push_back(Platform1);
     Platforms.push_back(Platform2);
     Platforms.push_back(Platform3);
     Platforms.push_back(Platform4);
-    Platforms.push_back(Phantom);
+    Platforms.push_back(Platform5);
+    Platforms.push_back(Floor);
+    Platforms.push_back(Wall_left);
+    Platforms.push_back(Wall_right);
+   // Platforms.push_back(Phantom);
 
 
 
@@ -114,7 +168,7 @@ sf::FloatRect Level_Walls::BottomWallBound()
 
 BackGround::BackGround()
 {
-    BackGround_Texture.loadFromFile("Biel.png");
+    BackGround_Texture.loadFromFile("Background_5.png");
     BackGround_Texture.setRepeated(true);
     BackGround_T.setTexture(BackGround_Texture);
     BackGround_T.setTextureRect(sf::IntRect(0, 0, 1920, 1080));

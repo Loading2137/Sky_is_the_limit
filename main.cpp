@@ -2,6 +2,7 @@
 #include <vector>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <fstream>
 #include <string>
 #include <stdlib.h>
@@ -10,6 +11,11 @@
 
 int main()
 {
+       // to future dipshit
+    // jeśli wyjebiesz zapis rozmiaru okna twoje problemy znikną
+    // wybierz zapis domyślny 1920x1080 i reszte zapisów zostaw jako
+    // boole, zmienne i pozycje przeskalowaną do oryginalnego rozmiaru
+    // wszystko się skaluje jak zmieniasz rozmiar okna w trakcie sesji
     int number_of_saves = 0;
     int screen_width;
     int screen_height;
@@ -60,14 +66,32 @@ int main()
     std::cout<<screen_height<<std::endl;
     std::cout<<scale_factor<<std::endl;
 
+
+
     int window_value=1;
     int first_save=1;       //will be read from only Save1
     float Time = 0;
 
 
     sf::RenderWindow window(sf::VideoMode(screen_width, screen_height), "Sky Is The Limit");
+
     window.setFramerateLimit(120);
     sf::Clock deltaClock;
+
+
+    // Declare a new music
+    sf::Music music;
+
+    // Open it from an audio file
+    if (!music.openFromFile("Ambience.ogg"))
+    {
+        // error...
+    }
+    music.setPitch(0.5);           // increase the pitch
+    music.setVolume(35);         // reduce the volume
+    music.setLoop(true);         // make it loop
+    bool ambient_playing=0;
+
 
 //    Window_value Setup
 //    value 1 - main menu
@@ -237,9 +261,22 @@ int main()
 //#####################################################################################
     Player p1;
     Level_Platforms p2;
-    Level_Walls p3;
+    //Level_Walls p3;
     Player_Texture p4;
     BackGround p5;
+    Player_Sounds p6;
+
+
+    //p2.scale(scale_factor);
+//    p1.scale(scale_factor);
+
+
+    sf::SoundBuffer buffer;
+    buffer.loadFromFile("SFX_Jump_09.wav");
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+
+
 
 
     while (window.isOpen()) {
@@ -247,9 +284,9 @@ int main()
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
-                window.close();
+                window.close();         
+            window.setSize(sf::Vector2u(screen_width, screen_height));
 
-              window.setSize(sf::Vector2u(screen_width, screen_height));
         }
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -471,10 +508,12 @@ int main()
         }else Mouse_pressed=0;
 
 
+
         if(window_value==6)
         {
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            window_value=7;
+
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window_value=7;
         }
         }
 
@@ -492,10 +531,16 @@ int main()
 
         Time+=Time+Second;
         //p1.Movement(Second, window_value);
+        p6.Sound_movement(window_value);
         p1.Movement_Again(Second, window_value);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
+        p1.Collisions(Second, window_value);
+
+
 
         window.clear(sf::Color::Black);
+
+
 
         if(window_value==1) //menu screen
         {
@@ -542,19 +587,31 @@ int main()
 
         else if(window_value==6)        //actual game
         {
+            if(ambient_playing==0)
+            {
+                music.play();
+                ambient_playing=1;
+            }
             window.draw(p1);
             window.draw(p5);
             window.draw(p2);
-            window.draw(p3);
+           // window.draw(p3);
             window.draw(p4);
 
         }
         else if (window_value==7)
         {
+
            window.draw(Background);
 
            window.draw(Exit);
         }
+        if (window_value!=6)
+        {
+           ambient_playing=0;
+          music.pause();
+        }
+
 
 
         window.display();

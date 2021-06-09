@@ -11,6 +11,7 @@ public:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     Level_Platforms();
     std::vector<sf::FloatRect> PlatformBounds();
+    void scale(int scale_factor);
 
 };
 

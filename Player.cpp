@@ -2,20 +2,38 @@
 #include <vector>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <Player.h>
 #include <Map.h>
 #include <Colision.h>
+
+
+
+//double scale_factor=1;
+
+
+//void Player::scale(int scale)
+//{
+//     scale_factor=scale;
+//}
+
 
 Level_Platforms p1;
 Level_Walls p2;
 Player_Animation p3;
 std::vector<sf::FloatRect>PlatformBounds = p1.PlatformBounds();
+
 sf::FloatRect BottomWall = p2.BottomWallBound();
 sf::FloatRect LeftWall = p2.LeftWallBound();
 sf::FloatRect RightWall = p2.RightWallBound();
 
+std::vector<sf::FloatRect>Collision_Box = p1.PlatformBounds();
+std::vector<sf::Vector2f> penetrator_value;
+std::vector<bool> penetrator_bool;
+
 bool left=0;
-int jump_frames=0;
+bool already_playing=0;
+
 
 //Gravity
 const float jump_speed = -1200.f;
@@ -24,8 +42,9 @@ const float gravity_const = 20.f;
 
 sf::Vector2f velocity;
 int ground_level=1000;
-
+bool why_are_you_running=0;
 bool isJumping =0;
+bool Falling=0;
 bool onFloor =0;
 float Time = 0;
 float gravity = gravity_const;
@@ -38,12 +57,63 @@ void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) con
 {
     target.draw(Texture_Box[0], states);
 }
+
 Player::Player()
 {
     sf::RectangleShape Player(sf::Vector2f(32.f,64.f));
     Player.setPosition(sf::Vector2f(1200.f,900.f));
     Player_Box.push_back(Player);
 }
+
+Player_Sounds::Player_Sounds()
+{
+    Buffer_jump.loadFromFile("SFX_Jump_09.wav");
+    Sound_jump.setBuffer(Buffer_jump);
+    Sound_jump.setVolume(60);
+    Buffer_run.loadFromFile("step_cloth1.ogg");
+    You_say_run.setBuffer(Buffer_run);
+    You_say_run.setVolume(60);
+    You_say_run.setLoop(true);
+
+}
+void Player_Sounds::Sound_movement(int window_value)
+{
+    if(window_value==6)
+    {
+    std::cout<<why_are_you_running<<std::endl;
+     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0 && Falling==0)
+     {
+         Sound_jump.play();
+     }
+     if((sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isJumping==0 && Falling==0)||( sf::Keyboard::isKeyPressed(sf::Keyboard::D) && isJumping==0 && Falling==0) )
+     {
+
+         why_are_you_running=1;
+     }
+     else if(!(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || isJumping==1  || Falling==1)
+     {
+         why_are_you_running=0;
+     }
+
+     if(why_are_you_running)
+     {
+        if(!already_playing)
+        {
+           You_say_run.play();
+           already_playing=1;
+        }
+
+     }
+     else if(!why_are_you_running)
+     {
+         You_say_run.pause();
+         already_playing=0;
+     }
+
+    }
+}
+
+
 Player_Texture::Player_Texture()
 {
     sf::Sprite Player;
@@ -53,6 +123,7 @@ Player_Texture::Player_Texture()
     Player.setPosition(sf::Vector2f(1200.f,900.f));
     Texture_Box.push_back(Player);
 }
+
 Player_Animation::Player_Animation()
 {
    idleAnimation.push_back(sf::IntRect(28, 0, 8, 16));
@@ -70,16 +141,17 @@ Player_Animation::Player_Animation()
 
 }
 
-
 sf::IntRect Player_Animation::getCurrentRect(int Current_frame)
 {
     if(isJumping && velocity.y<0)
     {
         return jumpingAnimation[0];
     }
-    else if(velocity.y>0.f )
+    else if(velocity.y>20.f )
     {
         return jumpingAnimation[1];
+
+
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)|| sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -110,10 +182,10 @@ int Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::
         return Current_frame;
 }
 
-
-
 void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 {
+
+
 
         Player_Texture();
         Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
@@ -392,6 +464,8 @@ sf::Vector2f Player::Position()
 void Player::Movement_Again(float Second, int window_value)
 {
 
+
+
     if(window_value==6)
     {
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -402,8 +476,9 @@ void Player::Movement_Again(float Second, int window_value)
         }
         else
             velocity.x=0.f;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0 && Falling==0) {
             velocity.y =jump_speed;
+
             isJumping=1;
         }
 
@@ -411,16 +486,89 @@ void Player::Movement_Again(float Second, int window_value)
         {
             velocity.y += gravity_const;
         }
-        else
+
+        if (velocity.y>20.f )
         {
-            Player_Box[0].setPosition(Player_Box[0].getPosition().x, ground_level-Player_Box[0].getGlobalBounds().height);
-            velocity.y=0.f;
-            isJumping=0;
+            Falling=1;
         }
-        std::cout<<velocity.y<<std::endl;
+//        else
+//        {
+//            Player_Box[0].setPosition(Player_Box[0].getPosition().x, ground_level-Player_Box[0].getGlobalBounds().height);
+//            velocity.y=0.f;
+//            isJumping=0;
+//        }
+        //std::cout<<velocity.y<<std::endl;
         Player_Box[0].move(velocity*Second);
     }
 
+}
+
+void Player::Collisions(float Second,int window_value)
+{
+    sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
+    if(window_value==6)
+    {
+        for(int i=0; i<Collision_Box.size(); i++)
+        {
+            std::vector<sf::Vector2f> Place_holder;
+            if(PlayerBounds.intersects(Collision_Box[i]))
+            {
+                penetrator_bool.push_back(1);
+            }
+            else penetrator_bool.push_back(0);
+            //bottom and left
+            if(PlayerBounds.top+PlayerBounds.height>Collision_Box[i].top && PlayerBounds.left<Collision_Box[i].left+Collision_Box[i].width)
+            {
+                penetrator_value.push_back(sf::Vector2f (PlayerBounds.top+PlayerBounds.height-Collision_Box[i].top ,PlayerBounds.left-Collision_Box[i].left+Collision_Box[i].width));
+            }
+            //bottom and right
+            if(PlayerBounds.top+PlayerBounds.height>Collision_Box[i].top && PlayerBounds.left+PlayerBounds.width>Collision_Box[i].left)
+            {
+                penetrator_value.push_back(sf::Vector2f (PlayerBounds.top+PlayerBounds.height-Collision_Box[i].top ,PlayerBounds.left-Collision_Box[i].left+Collision_Box[i].width));
+            }
+
+        }
+        sf::Vector2f penetration (0.f, 0.f);
+        for(auto &i : Collision_Box)
+        {
+            if(PlayerBounds.intersects(i))
+            {
+                //std::cout<<"Collision"<<std::endl;
+                if(PlayerBounds.top+PlayerBounds.height>i.top)
+                {
+                    penetration.y=PlayerBounds.top+PlayerBounds.height-i.top;
+                    Player_Box[0].setPosition(Player_Box[0].getPosition().x-penetration.x, Player_Box[0].getPosition().y-penetration.y);
+                    velocity.y=0.f;
+                    isJumping=0;
+                    Falling=0;
+                }
+                else if(PlayerBounds.left<i.left+i.width)
+                {
+                    penetration.x=PlayerBounds.left+i.left+i.width;
+                    Player_Box[0].setPosition(Player_Box[0].getPosition().x+penetration.x,Player_Box[0].getPosition().y+penetration.y);
+                    velocity.x=0;
+                }
+                else if(PlayerBounds.left+PlayerBounds.width>i.left)
+                {
+                    penetration.x=PlayerBounds.left+PlayerBounds.width-i.left;
+                    Player_Box[0].setPosition(Player_Box[0].getPosition().x-penetration.x,Player_Box[0].getPosition().y-penetration.y);
+                    velocity.x=0;
+                }
+
+
+
+
+
+            }
+
+
+        }
+
+
+        //std::cout<<isJumping<<"     "<< Falling <<std::endl;
+
+
+    }
 }
 
 

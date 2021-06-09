@@ -593,8 +593,9 @@ int main()
                 music.play();
                 ambient_playing=1;
             }
-            window.draw(p1);
+
             window.draw(p5);
+            window.draw(p1);
             window.draw(p2);
            // window.draw(p3);
             window.draw(p4);

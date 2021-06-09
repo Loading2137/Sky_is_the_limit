@@ -122,8 +122,6 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
     {
         sf::FloatRect wallBounds = i.getGlobalBounds();
         CakeIsALie.push_back(wallBounds);
-
-
     }
     return CakeIsALie;
 }

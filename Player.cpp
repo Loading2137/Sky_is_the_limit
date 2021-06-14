@@ -8,20 +8,11 @@
 #include <Colision.h>
 
 
-
-//double scale_factor=1;
-
-
-//void Player::scale(int scale)
-//{
-//     scale_factor=scale;
-//}
-
-
 Level_Platforms p1;
 Level_Walls p2;
 Player_Animation p3;
-std::vector<sf::FloatRect>PlatformBounds = p1.PlatformBounds();
+
+sf::Vector2f Spawn_position;
 
 sf::FloatRect BottomWall = p2.BottomWallBound();
 sf::FloatRect LeftWall = p2.LeftWallBound();
@@ -33,6 +24,10 @@ std::vector<bool> penetrator_bool;
 
 bool left=0;
 bool already_playing=0;
+bool dash_pressed=0;
+bool dash=0;
+double interval=0.09539;
+
 
 
 //Gravity
@@ -47,7 +42,9 @@ bool isJumping =0;
 bool Falling=0;
 bool onFloor =0;
 float Time = 0;
+float dashTime=12;
 float gravity = gravity_const;
+
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
@@ -58,12 +55,22 @@ void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) con
     target.draw(Texture_Box[0], states);
 }
 
+
+sf::Vector2f Player::getPosition(int number_of_saves, sf::Vector2f Spawn)
+{
+    if(number_of_saves>0)
+        Player_Box[0].setPosition(Spawn);
+
+
+
+}
 Player::Player()
 {
     sf::RectangleShape Player(sf::Vector2f(32.f,64.f));
-    Player.setPosition(sf::Vector2f(1200.f,900.f));
+    Player.setPosition(1200.f,900.f);
     Player_Box.push_back(Player);
 }
+
 
 Player_Sounds::Player_Sounds()
 {
@@ -72,7 +79,7 @@ Player_Sounds::Player_Sounds()
     Sound_jump.setVolume(60);
     Buffer_run.loadFromFile("step_cloth1.ogg");
     You_say_run.setBuffer(Buffer_run);
-    You_say_run.setVolume(60);
+    You_say_run.setVolume(80);
     You_say_run.setLoop(true);
 
 }
@@ -80,7 +87,6 @@ void Player_Sounds::Sound_movement(int window_value)
 {
     if(window_value==6)
     {
-    std::cout<<why_are_you_running<<std::endl;
      if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0 && Falling==0)
      {
          Sound_jump.play();
@@ -139,33 +145,59 @@ Player_Animation::Player_Animation()
    jumpingAnimation.push_back(sf::IntRect(541, 0, 6, 16));
    jumpingAnimation.push_back(sf::IntRect(667, 0, 10, 16));
 
+   dashAnimation.push_back(sf::IntRect(1818, 0, 10, 16));
+   dashAnimation.push_back(sf::IntRect(1873, 0, 20, 16));
+   dashAnimation.push_back(sf::IntRect(1935, 0, 23, 16));
+   dashAnimation.push_back(sf::IntRect(1998, 0, 24, 16));
+   dashAnimation.push_back(sf::IntRect(2064, 0, 22, 16));
+   dashAnimation.push_back(sf::IntRect(2128, 0, 21, 16));
+
+   RAnimation.push_back(sf::IntRect(11, 10, 126, 138));
+   RAnimation.push_back(sf::IntRect(141, 16, 126, 138));
+   RAnimation.push_back(sf::IntRect(270, 34, 126, 120));
+
+
+   wall_grabAnimation= sf::IntRect(1432, 0, 10, 16);
+
 }
 
-sf::IntRect Player_Animation::getCurrentRect(int Current_frame)
+sf::IntRect Player_Animation::getCurrentRect(int Current_frame, float Second)
 {
-    if(isJumping && velocity.y<0)
+
+    if(dash_pressed)
+    {
+        std::cout<<Current_frame<<"     "<<dashTime<<"     "<<interval<<std::endl;
+        return dashAnimation[Current_frame];
+    }
+    else if(isJumping && velocity.y<0)
     {
         return jumpingAnimation[0];
     }
     else if(velocity.y>20.f )
     {
         return jumpingAnimation[1];
-
-
     }
     else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)|| sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         return runningAnimation[Current_frame];
     }
-    else if(!(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::H))
+    {
+        return wall_grabAnimation;
+    }
+    else if(!(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::H)))
     {
         return idleAnimation[Current_frame];
     }
+
+
+
 }
 
-int Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::IntRect> frames)
+int Player_Animation ::step(float Second, double animation_fps)
 {
         float time_between_frames=1.f/animation_fps;
+
 
         Time = Time + Second;
 
@@ -179,7 +211,34 @@ int Player_Animation ::step(float Second, int animation_fps)//, std::vector<sf::
                 Current_frame=0;
             }
         }
+
         return Current_frame;
+}
+int Player_Animation ::Dash()
+{
+
+
+
+        if(dashTime>interval)
+        {
+
+
+
+
+            CurrentDash_frame++;
+            interval+=0.095/*39*/;
+
+            if(CurrentDash_frame>5)
+            {
+                            std::cout<<"dash"<<std::endl;
+                CurrentDash_frame=0;
+                interval=0.09539;
+            }
+
+        }
+         return CurrentDash_frame;
+
+
 }
 
 void Player_Texture::Movement_T(sf::Vector2f position, float Second)
@@ -188,27 +247,39 @@ void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 
 
         Player_Texture();
-        Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+
         Texture_Box[0].setPosition(position);
+
+        if(dash_pressed)
+        {
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.Dash(), Second));
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         {
 
-            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7),Second));
         }
 
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         {
 
-            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 14),Second));
             left=0;
         }
         else if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
 
-            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7)));
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 14),Second));
             left=1;
         }
+
+        else
+        {
+            Texture_Box[0].setTextureRect(animation.getCurrentRect(animation.step(Second, 7),Second));
+        }
+
+
 
         if(left)
         {
@@ -224,238 +295,7 @@ void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 
 }
 
-void Player::Movement(float Second, int window_value)
-{
-    if(window_value==6)
-    {
-        sf::Vector2f velocity;
-        velocity.x=0.f;
-        velocity.y=0.f;
-        sf::FloatRect PlayerBounds = Player_Box[0].getGlobalBounds();
 
-        float movement_speed = 400.f;
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-            velocity.x += -movement_speed*Second;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-            velocity.x += movement_speed*Second;
-        }
-
-        if((sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) ){
-            isJumping=1;
-            onFloor=0;
-
-
-
-        }
-
-        if(isJumping)       // when jumping
-        {
-
-            Time +=Second;
-            velocity.y=-1200.f*Second;
-            std::cout<<Time<<std::endl;
-            if(Time>1.f)
-            {
-                isJumping=0;
-                velocity.y=1200.f*Second;
-                Time=0;
-            }
-
-
-                        gravity +=(gravity_const *Time*Time)/2.f;
-                        velocity.y +=(jump_speed+ gravity_const)*Second;
-
-
-            for(auto &i : PlatformBounds)
-            {
-                sf::FloatRect wallBounds = i;
-
-                if(wallBounds.intersects(PlayerBounds))
-                {
-
-                    if(PlayerBounds.top < wallBounds.top
-                            &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                    {
-                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
-                        velocity.y=0.f;
-                        onFloor=1;
-                        isJumping=0;
-                        Time = 0;
-                        gravity =0;
-                    }
-
-                    else if(PlayerBounds.top > wallBounds.top
-                            &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                    {
-                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
-                        velocity.y=0.f;
-                    }
-
-                    else if(PlayerBounds.left < wallBounds.left
-                            &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                    {
-                        velocity.x=0.f;
-                    }
-
-                    else if(PlayerBounds.left > wallBounds.left
-                            &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                    {
-                        velocity.x=0.f;
-                    }
-                    else onFloor =0;
-                }
-            }
-
-            //Wall colision
-
-            //Bottom collisions
-            if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
-            {
-                Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
-                onFloor=1;
-                isJumping=0;
-                gravity =0;
-                Time = 0;
-
-                velocity.y=0.f;
-            }
-            //Left collision
-            else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
-            {
-                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            //Right collision
-            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-            {
-                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            else onFloor =0;
-        }
-
-        if(!onFloor)    //collisions when in air/not on floor
-        {
-            Time +=Second;
-            gravity +=(gravity_const *Time*Time)/2.f;
-            velocity.y += gravity*Second;
-            //velocity.y=1200.f*Second;
-
-            for(auto &i : PlatformBounds)       //collions with platforms
-            {
-                sf::FloatRect wallBounds = i;
-
-                if(wallBounds.intersects(PlayerBounds))
-                {
-
-                    if(PlayerBounds.top < wallBounds.top
-                            &&  PlayerBounds.top+PlayerBounds.height< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                    {
-                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top- PlayerBounds.height);
-                        velocity.y=0.f;
-                        onFloor=1;
-                        isJumping=0;
-                        gravity =0;
-                        Time = 0;
-
-                    }
-
-                    else if(PlayerBounds.top > wallBounds.top
-                            &&  PlayerBounds.top+PlayerBounds.height> wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.left< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.left+ PlayerBounds.width> wallBounds.left)
-
-                    {
-                        Player_Box[0].setPosition(PlayerBounds.left, wallBounds.top+ wallBounds.height);
-                        velocity.y=0.f;
-                    }
-
-                    else if(PlayerBounds.left < wallBounds.left
-                            &&  PlayerBounds.left+PlayerBounds.width< wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                    {
-                        velocity.x=0.f;
-                    }
-
-                    else if(PlayerBounds.left > wallBounds.left
-                            &&  PlayerBounds.left+PlayerBounds.width> wallBounds.left+wallBounds.width
-                            &&  PlayerBounds.top< wallBounds.top+wallBounds.height
-                            &&  PlayerBounds.top+ PlayerBounds.height> wallBounds.top)
-
-                    {
-                        velocity.x=0.f;
-                    }
-                    else onFloor =0;
-                }
-            }
-
-            //Wall colisions
-
-            //Bottom collisions
-            if(PlayerBounds.top+PlayerBounds.height> BottomWall.top)
-            {
-                Player_Box[0].setPosition(PlayerBounds.left,BottomWall.top-PlayerBounds.height);
-                onFloor=1;
-                isJumping=0;
-                gravity =0;
-                Time = 0;
-                velocity.y=0.f;
-            }
-            //Left collision
-            else if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
-            {
-                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            //Right collision
-            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-            {
-                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            else onFloor =0;
-        }
-
-        if(onFloor)     //collisions with walls when on floor
-        {
-
-            //Left collision
-            if(PlayerBounds.left< LeftWall.left+LeftWall.width && PlayerBounds.left<960.f)
-            {
-                Player_Box[0].setPosition(LeftWall.left+LeftWall.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            //Right collision
-            else if(PlayerBounds.left+PlayerBounds.width> RightWall.left && PlayerBounds.left>960.f)
-            {
-                Player_Box[0].setPosition(RightWall.left-PlayerBounds.width, PlayerBounds.top);
-                velocity.x=0.f;
-            }
-            else onFloor =0;
-        }
-
-        Player_Box[0].move(velocity);
-    }
-}
 sf::Vector2f Player::Position()
 {
     return Player_Box[0].getPosition();
@@ -468,12 +308,14 @@ void Player::Movement_Again(float Second, int window_value)
 
     if(window_value==6)
     {
-        velocity.x=0.f;
+
+        if(!dash_pressed)
+            velocity.x=0.f;
 //        velocity.y=0.f;
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && dash_pressed==0) {
             velocity.x = -movement_speed;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) && dash_pressed==0) {
             velocity.x = movement_speed;
         }
 //        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
@@ -484,13 +326,39 @@ void Player::Movement_Again(float Second, int window_value)
 //            velocity.y = -movement_speed/2;
 //        }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==0 && Falling==0) {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==0 && Falling==0)
+        {
             velocity.y =jump_speed;
 
             isJumping=1;
         }
 
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::C) && dashTime>1.f)
+        {
+            if(left) { velocity.x =-1500.f; }
+            else { velocity.x =1500.f; }
+            dashTime=0;
+            dash_pressed=1;
+        }
+        dashTime+=Second;
             velocity.y += gravity_const;
+
+            if(dash_pressed)
+            {
+                if(left)
+                {
+                    velocity.x += 22;
+                    if(velocity.x>0)
+                        dash_pressed=0;
+                }
+                else
+                {
+                    velocity.x -= 22;
+                    if(velocity.x<0)
+                        dash_pressed=0;
+                }
+
+            }
 
 
         //std::cout<<velocity.y<<std::endl;
@@ -586,30 +454,27 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
     }
     //reaction to edges
     sf::Vector2f reaction;
-    if(isIntersecting_top && isIntersecting_bottom)
-    {
-       std::cout<<"Ladies and gentelman we got it"<<std::endl;
+    if(isIntersecting_top && isIntersecting_bottom){}
 
-    }
     else if(isIntersecting_top)
     {
-        std::cout<<"Top"<<std::endl;
+//        std::cout<<"Top"<<std::endl;
         reaction.y = Platform.top-(Player.top+Player.height);
     }
     else if(isIntersecting_bottom)
     {
-        std::cout<<"Bottom"<<std::endl;
+//        std::cout<<"Bottom"<<std::endl;
         reaction.y = (Platform.top+Platform.height)-Player.top;
     }
 
     if (isIntersecting_left)
     {
-        std::cout<<"Left"<<std::endl;
+        //std::cout<<"Left"<<std::endl;
         reaction.x = Platform.left-(Player.left+Player.width);
     }
     else if(isIntersecting_right)
     {
-        std::cout<<"right"<<std::endl;
+        //std::cout<<"right"<<std::endl;
         reaction.x = (Platform.left+Platform.width)-Player.left;
     }
 

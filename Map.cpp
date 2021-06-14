@@ -42,29 +42,6 @@ void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 float grid_size=60.f;
 Level_Platforms::Level_Platforms()
 {
-
-//    std::fstream Save1;
-
-//    Save1.open("Save1");
-
-//    std::string linia ;
-//    int nr_lini=1;
-//    for(int i = 0; i<3; i++)
-//    {
-//        std::getline(Save1, linia);
-//        switch (nr_lini)
-//        {
-//        case 1: screen_width = atoi(linia.c_str()); break;
-//        case 2: screen_height = atoi(linia.c_str()); break;
-//        case 3: scale_factor =atof (linia.c_str()); break;
-//        }
-//        nr_lini++;
-//    }
-//    Save1.close();
-
-
-
-
     sf::RectangleShape Platform1 (sf::Vector2f(6*grid_size,grid_size));
     Platform1.setPosition(0.f,700.f);
     Platform1.setFillColor(sf::Color(150,150,150));

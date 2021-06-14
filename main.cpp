@@ -9,17 +9,29 @@
 #include <Player.h>
 #include <Map.h>
 
+void Saving(std::fstream &Save , sf::Vector2f position)
+{
+
+    //std::cout<<scale_factor<<std::endl;
+
+    Save<<position.x+2<<std::endl; //zmień na pozycje
+    Save<<position.y+2<<std::endl;
+    //Save1<<scale_factor<<std::endl;
+
+}
+
+
 int main()
 {
-       // to future dipshit
-    // jeśli wyjebiesz zapis rozmiaru okna twoje problemy znikną
-    // wybierz zapis domyślny 1920x1080 i reszte zapisów zostaw jako
-    // boole, zmienne i pozycje przeskalowaną do oryginalnego rozmiaru
-    // wszystko się skaluje jak zmieniasz rozmiar okna w trakcie sesji
+
     int number_of_saves = 0;
-    int screen_width;
-    int screen_height;
-    double scale_factor;
+    int screen_width=1920;
+    int screen_height=1080;
+    double scale_factor=1;
+    std::vector<bool> if_file_exist;
+
+    sf::Vector2f Spawn;
+    int Current_Save=0;
 
     std::fstream Save1;
     Save1.open( "Save1" );
@@ -28,48 +40,75 @@ int main()
     std::fstream Save3;
     Save3.open( "Save3");
 
+    Save1.close();
+    Save2.close();
+    Save3.close();
+
+
+
+
     if(Save1)
     {
-        std::cout<<"file exists";
+        std::cout<<"number_of_saves"<<std::endl;
+
+        if_file_exist.push_back(1);
+        number_of_saves++;
     }
     else
     {
-        std:: cout<<"file doesn't exist";
-        Save1.open("Save1", std::ios::out );
-        number_of_saves=1;
-        Save1<<1920<<std::endl; //screen width
-        Save1<<1080<<std::endl; //screen hight
-        Save1<<1<<std::endl;    //scale factor
-
-
+      if_file_exist.push_back(0);
     }
-    Save1.close();
-
-    Save1.open("Save1");
-
-
-    std::string linia ;
-    int nr_lini=1;
-    for(int i = 0; i<3; i++)
+    if(Save2)
     {
-        std::getline(Save1, linia);
-        switch (nr_lini)
-        {
-        case 1: screen_width = atoi(linia.c_str()); break;
-        case 2: screen_height = atoi(linia.c_str()); break;
-        case 3: scale_factor =atof (linia.c_str()); break;
-        }
-        nr_lini++;
+        if_file_exist.push_back(1);
+        number_of_saves++;
     }
-    Save1.close();
-    std::cout<<screen_width<<std::endl;
-    std::cout<<screen_height<<std::endl;
-    std::cout<<scale_factor<<std::endl;
+    else
+    {
+      if_file_exist.push_back(0);
+    }
+    if(Save3)
+    {
+        if_file_exist.push_back(1);
+        number_of_saves++;
+    }
+    else
+    {
+      if_file_exist.push_back(0);
+    }
+
+    //std::cout<<Save1.is_open()<<"    "<<Save2.is_open()<<"    "<<Save3.is_open()<<std::endl;
+   // std::cout<<number_of_saves<<std::endl;
 
 
 
-    int window_value=6;
-    int first_save=1;       //will be read from only Save1
+
+
+
+//    for(int i=0; i<if_file_exist.size(); i++)
+//    {
+//        std::cout<<if_file_exist[i]<<std::endl;
+//    }
+
+
+
+//    else
+//    {
+//        std:: cout<<"file doesn't exist";
+//        Save1.open("Save1", std::ios::out );
+//        number_of_saves=1;
+//        Save1<<1920<<std::endl; //screen width
+//        Save1<<1080<<std::endl; //screen hight
+//        Save1<<1<<std::endl;    //scale factor
+
+
+//    }
+
+
+
+
+
+    int window_value=1;
     float Time = 0;
 
 
@@ -147,6 +186,10 @@ int main()
     sf::Texture Load_Texture;
     sf::Texture New_Game_Texture;
     sf::Texture Continue_Game_Texture;
+    sf::Texture Empty_Texture;
+    sf::Texture Save1_Texture;
+    sf::Texture Save2_Texture;
+    sf::Texture Save3_Texture;
 
     sf::Sprite Load;
     Load.setPosition(Middle);
@@ -161,10 +204,47 @@ int main()
     New_Game.setScale(Common_scale);
 
     sf::Sprite Continue_Game;
-    New_Game.setPosition(Top);
+    Continue_Game.setPosition(Top);
     Continue_Game_Texture.loadFromFile("Continue Game 192x48.png");
-    New_Game.setTexture(Continue_Game_Texture);
-    New_Game.setScale(Common_scale);
+    Continue_Game.setTexture(Continue_Game_Texture);
+    Continue_Game.setScale(Common_scale);
+
+//    sf::Vector2f Top (scale_factor*200.0, scale_factor*200.0);
+//    sf::Vector2f Middle (scale_factor*200.0, scale_factor*500.0);
+//    sf::Vector2f Bottom (scale_factor*200.0, scale_factor*800.0);
+    sf::Sprite Empty1;
+    sf::Sprite Empty2;
+    sf::Sprite Empty3;
+    Empty1.setPosition(Top);
+    Empty2.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*400));
+    Empty3.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*600));
+    Empty_Texture.loadFromFile("Empty.png");
+    Empty1.setTexture(Empty_Texture);
+    Empty2.setTexture(Empty_Texture);
+    Empty3.setTexture(Empty_Texture);
+    Empty1.setScale(Common_scale);
+    Empty2.setScale(Common_scale);
+    Empty3.setScale(Common_scale);
+
+    sf::Sprite Save_1;
+    Save_1.setPosition(Top);
+    Save1_Texture.loadFromFile("Save_1.png");
+    Save_1.setTexture(Save1_Texture);
+    Save_1.setScale(Common_scale);
+
+    sf::Sprite Save_2;
+    Save_2.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*400));
+    Save2_Texture.loadFromFile("Save_2.png");
+    Save_2.setTexture(Save2_Texture);
+    Save_2.setScale(Common_scale);
+
+    sf::Sprite Save_3;
+    Save_3.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*600));
+    Save3_Texture.loadFromFile("Save_3.png");
+    Save_3.setTexture(Save3_Texture);
+    Save_3.setScale(Common_scale);
+
+
 
 
 //#####################################################################################
@@ -267,8 +347,6 @@ int main()
     Player_Sounds p6;
 
 
-    //p2.scale(scale_factor);
-//    p1.scale(scale_factor);
 
 
     sf::SoundBuffer buffer;
@@ -295,7 +373,7 @@ int main()
 
             mouse_pos.x = mouse_pos.x;//scale_factor;
             mouse_pos.y = mouse_pos.y;//scale_factor;
-            std::cout<<mouse_pos.x<<"  "<<mouse_pos.y<<std::endl;
+//            std::cout<<mouse_pos.x<<"  "<<mouse_pos.y<<std::endl;
             //Load menu
             if(mouse_pos.x>= Start.getGlobalBounds().left &&
                     mouse_pos.x<= Start.getGlobalBounds().left+Start.getGlobalBounds().width &&
@@ -309,16 +387,216 @@ int main()
                 window_value=2;
                 }
             }
-            if(mouse_pos.x>= Start.getGlobalBounds().left &&
-                    mouse_pos.x<= Start.getGlobalBounds().left+Start.getGlobalBounds().width &&
-                    mouse_pos.y>= Start.getGlobalBounds().top &&
-                    mouse_pos.y<= Start.getGlobalBounds().top+Start.getGlobalBounds().height
-                    && window_value==2 && first_save==1)
+            if(mouse_pos.x>= New_Game.getGlobalBounds().left &&
+                    mouse_pos.x<= New_Game.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= New_Game.getGlobalBounds().top &&
+                    mouse_pos.y<= New_Game.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==2 && number_of_saves==0)
             {
                 if(!Mouse_pressed)
                 {
                 Mouse_pressed=1;
                 window_value=6;
+                Current_Save=1;
+                if_file_exist[0]=1;
+                number_of_saves++;
+                Save1.open("Save1", std::ios::out );
+                Save1.close();
+                }
+            }
+            if(mouse_pos.x>= Continue_Game.getGlobalBounds().left &&
+                    mouse_pos.x<= Continue_Game.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Continue_Game.getGlobalBounds().top &&
+                    mouse_pos.y<= Continue_Game.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==2 && number_of_saves>0)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+
+                Save1.open("Save1");
+                std::string linia ;
+                int nr_lini=1;
+                for(int i = 0; i<2; i++)
+                {
+                    std::getline(Save1, linia);
+                    switch (nr_lini)
+                    {
+                    case 1: Spawn.x = ::atof(linia.c_str()); break;
+                    case 2: Spawn.y = ::atof(linia.c_str()); break;
+                    //case 3: scale_factor = atoi(linia.c_str()); break; atof(linia.c_str());
+                    }
+                    nr_lini++;
+                }
+                Save1.close();
+                p1.getPosition(number_of_saves, Spawn);
+
+                window_value=6;
+                }
+            }
+            //Loading Saves
+            if(mouse_pos.x>= Load.getGlobalBounds().left &&
+                    mouse_pos.x<= Load.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Load.getGlobalBounds().top &&
+                    mouse_pos.y<= Load.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==2)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                window_value=8;
+                }
+            }
+
+            if(mouse_pos.x>= Empty1.getGlobalBounds().left &&
+                    mouse_pos.x<= Empty1.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Empty1.getGlobalBounds().top &&
+                    mouse_pos.y<= Empty1.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[0]==0)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                window_value=6;
+                if_file_exist[0]=1;
+                number_of_saves++;
+                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                Save1.open("Save1", std::ios::out );
+                Save1.close();
+                Current_Save=1;
+                }
+            }
+            if(mouse_pos.x>= Empty2.getGlobalBounds().left &&
+                    mouse_pos.x<= Empty2.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Empty2.getGlobalBounds().top &&
+                    mouse_pos.y<= Empty2.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[1]==0)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                window_value=6;
+                if_file_exist[1]=1;
+                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                number_of_saves++;
+                Save2.open("Save2", std::ios::out );
+                Save2.close();
+                Current_Save=2;
+                }
+            }
+            if(mouse_pos.x>= Empty3.getGlobalBounds().left &&
+                    mouse_pos.x<= Empty3.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Empty3.getGlobalBounds().top &&
+                    mouse_pos.y<= Empty3.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[2]==0)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                window_value=6;
+                if_file_exist[2]=1;
+                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                number_of_saves++;
+                Save3.open("Save3", std::ios::out );
+                Save3.close();
+                Current_Save=3;
+                }
+            }
+
+            if(mouse_pos.x>= Save_1.getGlobalBounds().left &&
+                    mouse_pos.x<= Save_1.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Save_1.getGlobalBounds().top &&
+                    mouse_pos.y<= Save_1.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[0]==1)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                Current_Save=1;
+                Save1.open("Save1", std::ios::in);
+                std::string linia ;
+                int nr_lini=1;
+                for(int i = 0; i<2; i++)
+                {
+                    std::getline(Save1, linia);
+                    switch (nr_lini)
+                    {
+                    case 1: Spawn.x = ::atof(linia.c_str()); break;
+                    case 2: Spawn.y = ::atof(linia.c_str()); break;
+                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                    }
+                    nr_lini++;
+                }
+                p1.getPosition(number_of_saves, Spawn);
+                Save1.close();
+
+                window_value=6;
+
+
+                }
+            }
+            if(mouse_pos.x>= Save_2.getGlobalBounds().left &&
+                    mouse_pos.x<= Save_2.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Save_2.getGlobalBounds().top &&
+                    mouse_pos.y<= Save_2.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[1]==1)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                Current_Save=2;
+                Save2.open("Save2", std::ios::in);
+                std::string linia ;
+                int nr_lini=1;
+                for(int i = 0; i<2; i++)
+                {
+                    std::getline(Save2, linia);
+                    switch (nr_lini)
+                    {
+                    case 1: Spawn.x = ::atof(linia.c_str()); break;
+                    case 2: Spawn.y = ::atof(linia.c_str()); break;
+                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                    }
+                    nr_lini++;
+                }
+                p1.getPosition(number_of_saves, Spawn);
+                Save2.close();
+
+                window_value=6;
+
+
+                }
+            }
+            if(mouse_pos.x>= Save_3.getGlobalBounds().left &&
+                    mouse_pos.x<= Save_3.getGlobalBounds().left+Start.getGlobalBounds().width &&
+                    mouse_pos.y>= Save_3.getGlobalBounds().top &&
+                    mouse_pos.y<= Save_3.getGlobalBounds().top+Start.getGlobalBounds().height
+                    && window_value==8 && if_file_exist[2]==1)
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                Current_Save=3;
+                Save3.open("Save3", std::ios::in);
+                std::string linia ;
+                int nr_lini=1;
+                for(int i = 0; i<2; i++)
+                {
+                    std::getline(Save3, linia);
+                    switch (nr_lini)
+                    {
+                    case 1: Spawn.x = ::atof(linia.c_str()); break;
+                    case 2: Spawn.y = ::atof(linia.c_str()); break;
+                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                    }
+                    nr_lini++;
+                }
+                p1.getPosition(number_of_saves, Spawn);
+                Save3.close();
+
+                window_value=6;
+
+
                 }
             }
             //Settings
@@ -343,17 +621,7 @@ int main()
             {
                 if(!Mouse_pressed)
                 {
-                    if(number_of_saves<2)
-                    {
-                        std::cout<<screen_width<<std::endl;
-                        std::cout<<screen_height<<std::endl;
-                        std::cout<<scale_factor<<std::endl;
-                        Save1.open("Save1", std::ios::out);
-                        Save1<<screen_width<<std::endl;
-                        Save1<<screen_height<<std::endl;
-                        Save1<<scale_factor<<std::endl;
-                        Save1.close();
-                    }
+
                 return 0;
                 }
             }
@@ -421,14 +689,39 @@ int main()
                     mouse_pos.y>= Exit.getGlobalBounds().top &&
                     mouse_pos.y<= Exit.getGlobalBounds().top+Exit.getGlobalBounds().height
                     && (window_value==2 || window_value==3 || window_value==4 || window_value==5
-                    || window_value ==7))
+                    || window_value ==7 ||window_value==8))
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=1;
+                    if(window_value==7)
+                    {
+                    if(Current_Save==1)
+                    {
+                         Save1.open("Save1", std::ios::out);
+                        Saving(Save1, p1.Position());
+                        Save1.close();
+                    }
+                    if(Current_Save==2)
+                    {
+                         Save2.open("Save2", std::ios::out);
+                        Saving(Save2, p1.Position());
+                        Save2.close();
+                    }
+                    if(Current_Save==3)
+                    {
+                        Save3.open("Save3", std::ios::out);
+                        Saving(Save3, p1.Position());
+                        Save3.close();
+
+                    }
+
+
                 }
+                    Mouse_pressed=1;
+                    window_value=1;
             }
+            }
+
             //Resize
             else if(mouse_pos.x>= Window_Resize.getGlobalBounds().left &&
                     mouse_pos.x<= Window_Resize.getGlobalBounds().left+Window_Resize.getGlobalBounds().width &&
@@ -436,7 +729,6 @@ int main()
                     mouse_pos.y<= Window_Resize.getGlobalBounds().top+Window_Resize.getGlobalBounds().height
                     && window_value==4)
             {
-                std::cout<<Window_Resize.getGlobalBounds().top<<"   "<<Window_Resize.getGlobalBounds().left<<std::endl;
                 if(!Mouse_pressed)
                 {
                 Mouse_pressed=1;
@@ -454,7 +746,7 @@ int main()
                 Mouse_pressed=1;
                 window_value=4;
                 screen_width = 720;
-                screen_height = 405;        //do poprawki
+                screen_height = 405;
                  scale_factor=0.375;
                 }
             }
@@ -553,9 +845,17 @@ int main()
         else if (window_value==2)
         {
             window.draw(Background);
-            if(first_save)
+            if(number_of_saves==0)
+            {
                 window.draw(New_Game);
-            else window.draw(Continue_Game);
+            }
+
+            if(number_of_saves>0)
+            {
+                window.draw(Continue_Game);
+            }
+
+
 
             window.draw(Load);
             window.draw(Exit);
@@ -593,9 +893,8 @@ int main()
                 music.play();
                 ambient_playing=1;
             }
-
-            window.draw(p5);
             window.draw(p1);
+            window.draw(p5);
             window.draw(p2);
            // window.draw(p3);
             window.draw(p4);
@@ -608,6 +907,33 @@ int main()
 
            window.draw(Exit);
         }
+        //Load menu
+        else if (window_value==8)
+        {
+
+           window.draw(Background);
+           if(if_file_exist[0])
+            window.draw(Save_1);
+           else
+              window.draw(Empty1);
+
+           if(if_file_exist[1])
+            window.draw(Save_2);
+
+           else
+              window.draw(Empty2);
+
+           if(if_file_exist[2])
+            window.draw(Save_3);
+
+           else
+              window.draw(Empty3);
+
+
+
+           window.draw(Exit);
+        }
+
         if (window_value!=6)
         {
            ambient_playing=0;

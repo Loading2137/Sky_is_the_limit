@@ -77,32 +77,6 @@ int main()
       if_file_exist.push_back(0);
     }
 
-    //std::cout<<Save1.is_open()<<"    "<<Save2.is_open()<<"    "<<Save3.is_open()<<std::endl;
-   // std::cout<<number_of_saves<<std::endl;
-
-
-
-
-
-
-//    for(int i=0; i<if_file_exist.size(); i++)
-//    {
-//        std::cout<<if_file_exist[i]<<std::endl;
-//    }
-
-
-
-//    else
-//    {
-//        std:: cout<<"file doesn't exist";
-//        Save1.open("Save1", std::ios::out );
-//        number_of_saves=1;
-//        Save1<<1920<<std::endl; //screen width
-//        Save1<<1080<<std::endl; //screen hight
-//        Save1<<1<<std::endl;    //scale factor
-
-
-//    }
 
 
 

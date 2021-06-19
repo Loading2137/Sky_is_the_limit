@@ -21,6 +21,13 @@ void Saving(std::fstream &Save , sf::Vector2f position)
 }
 
 
+enum class WindowState
+{
+
+    MainMenu, SavesMenu, SettingsMenu, ResizeMenu, PauseMenu, ActualGame
+
+};
+
 int main()
 {
 
@@ -77,17 +84,27 @@ int main()
       if_file_exist.push_back(0);
     }
 
+    //    Window_value Setup
+    //    value 1 - main menu
+    //    value 2 - saves menu
+    //    value 3 - setting menu
+    //    value 4 - resize menu
+    //    value 5 - pause menu
+    //    value 6 - actual game
+    //    value 1
+    //    value 1
 
 
 
 
+//###############################################################################################################
+    int window_value=6;
 
-    int window_value=1;
     float Time = 0;
 
 
     sf::RenderWindow window(sf::VideoMode(screen_width, screen_height), "Sky Is The Limit");
-
+    sf::View view(sf::Vector2f(960,540), sf::Vector2f(screen_width, screen_height));
     window.setFramerateLimit(120);
     sf::Clock deltaClock;
 
@@ -106,15 +123,7 @@ int main()
     bool ambient_playing=0;
 
 
-//    Window_value Setup
-//    value 1 - main menu
-//    value 2 - saves menu
-//    value 3 - setting menu
-//    value 4 - resize menu
-//    value 5 - pause menu
-//    value 6 - actual game
-//    value 1
-//    value 1
+
 
 
     sf::Vector2f Top (scale_factor*200.0, scale_factor*200.0);
@@ -319,6 +328,8 @@ int main()
     Player_Texture p4;
     BackGround p5;
     Player_Sounds p6;
+    Map_Texture p7;
+
 
 
 
@@ -340,6 +351,19 @@ int main()
             window.setSize(sf::Vector2u(screen_width, screen_height));
 
         }
+
+        sf::Time Delta = deltaClock.restart();
+        float Second = Delta.asSeconds();
+if(window_value==6)
+{
+         view.setCenter(960,p1.camera_position(Second, window_value, view.getCenter().y));
+}
+else
+{
+    view.setCenter(960,540);
+}
+window.setView(view);
+
 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
            // sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
@@ -376,6 +400,7 @@ int main()
                 number_of_saves++;
                 Save1.open("Save1", std::ios::out );
                 Save1.close();
+                p7.is_this_fresh_file(1);
                 }
             }
             if(mouse_pos.x>= Continue_Game.getGlobalBounds().left &&
@@ -402,8 +427,9 @@ int main()
                     }
                     nr_lini++;
                 }
-                Save1.close();
                 p1.getPosition(number_of_saves, Spawn);
+                Save1.close();
+                p7.is_this_fresh_file(0);
 
                 window_value=6;
                 }
@@ -438,6 +464,7 @@ int main()
                 Save1.open("Save1", std::ios::out );
                 Save1.close();
                 Current_Save=1;
+                p7.is_this_fresh_file(1);
                 }
             }
             if(mouse_pos.x>= Empty2.getGlobalBounds().left &&
@@ -456,6 +483,7 @@ int main()
                 Save2.open("Save2", std::ios::out );
                 Save2.close();
                 Current_Save=2;
+                p7.is_this_fresh_file(1);
                 }
             }
             if(mouse_pos.x>= Empty3.getGlobalBounds().left &&
@@ -474,6 +502,7 @@ int main()
                 Save3.open("Save3", std::ios::out );
                 Save3.close();
                 Current_Save=3;
+                p7.is_this_fresh_file(1);
                 }
             }
 
@@ -503,6 +532,7 @@ int main()
                 }
                 p1.getPosition(number_of_saves, Spawn);
                 Save1.close();
+                p7.is_this_fresh_file(0);
 
                 window_value=6;
 
@@ -517,7 +547,7 @@ int main()
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
+                Mouse_pressed=1; 
                 Current_Save=2;
                 Save2.open("Save2", std::ios::in);
                 std::string linia ;
@@ -535,6 +565,7 @@ int main()
                 }
                 p1.getPosition(number_of_saves, Spawn);
                 Save2.close();
+                p7.is_this_fresh_file(0);
 
                 window_value=6;
 
@@ -567,6 +598,7 @@ int main()
                 }
                 p1.getPosition(number_of_saves, Spawn);
                 Save3.close();
+                p7.is_this_fresh_file(0);
 
                 window_value=6;
 
@@ -721,7 +753,7 @@ int main()
                 window_value=4;
                 screen_width = 720;
                 screen_height = 405;
-                 scale_factor=0.375;
+                 //scale_factor=0.375;
                 }
             }
             else if(mouse_pos.x>= r1280.getGlobalBounds().left &&
@@ -736,7 +768,7 @@ int main()
                 window_value=4;
                 screen_width = 1280;
                 screen_height = 720;
-                scale_factor=0.66666666666666666666666666666667;
+                //scale_factor=0.66666666666666666666666666666667;
                 }
             }
             else if(mouse_pos.x>= r1920.getGlobalBounds().left &&
@@ -751,7 +783,7 @@ int main()
                 window_value=4;
                 screen_width = 1920;
                 screen_height = 1080;
-                scale_factor=1;
+                //scale_factor=1;
                 }
             }
             else if(mouse_pos.x>= r2560 .getGlobalBounds().left &&
@@ -766,7 +798,7 @@ int main()
                 window_value=4;
                 screen_width = 2560;
                 screen_height = 1440 ;
-                scale_factor=1.3333;
+                //scale_factor=1.3333;
                 }
             }
 
@@ -792,15 +824,23 @@ int main()
         else
             Toggle2.setTextureRect(Toggle_Position[3]);
 
-        sf::Time Delta = deltaClock.restart();
-        float Second = Delta.asSeconds();
+
 
         Time+=Time+Second;
         //p1.Movement(Second, window_value);
-        p6.Sound_movement(window_value);
-        p1.Movement_Again(Second, window_value);
+        p6.Sound_movement(window_value, p7.is_chest_open());
+        p1.Movement_Again(Second, window_value,1,1,1); //p7.abilities()[0], p7.abilities()[1], p7.abilities()[2]
+//        auto r=p7.abilities();
+//        r[0];
+//        r[1];
+//        r[2];
+
         p1.Collisions(Second, window_value);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
+        p7.placement(p1.Player_bounds());
+        p7.key_animation(Second, p1.camera_position(Second, window_value, view.getCenter().y));
+
+
 
 
 
@@ -859,7 +899,6 @@ int main()
             window.draw(r2560);
             window.draw(Exit);
         }
-
         else if(window_value==6)        //actual game
         {
             if(ambient_playing==0)
@@ -870,7 +909,8 @@ int main()
             window.draw(p1);
             window.draw(p5);
             window.draw(p2);
-           // window.draw(p3);
+            window.draw(p7);
+//            window.draw(p8);
             window.draw(p4);
 
         }
@@ -907,7 +947,6 @@ int main()
 
            window.draw(Exit);
         }
-
         if (window_value!=6)
         {
            ambient_playing=0;

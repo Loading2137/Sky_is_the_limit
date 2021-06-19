@@ -6,17 +6,21 @@
 #include <Player.h>
 #include <Map.h>
 #include <Colision.h>
-
+#include <stdlib.h>
+float camera_speed=20;
+bool P_pressed=0;
+bool Free_movement_camera =0;
 
 Level_Platforms p1;
-Level_Walls p2;
+//Map_Texture p2;
 Player_Animation p3;
 
 sf::Vector2f Spawn_position;
 
-sf::FloatRect BottomWall = p2.BottomWallBound();
-sf::FloatRect LeftWall = p2.LeftWallBound();
-sf::FloatRect RightWall = p2.RightWallBound();
+
+//sf::FloatRect BottomWall = p2.BottomWallBound();
+//sf::FloatRect LeftWall = p2.LeftWallBound();
+//sf::FloatRect RightWall = p2.RightWallBound();
 
 std::vector<sf::FloatRect>Collision_Box = p1.PlatformBounds();
 std::vector<sf::Vector2f> penetrator_value;
@@ -25,7 +29,7 @@ std::vector<bool> penetrator_bool;
 bool left=0;
 bool already_playing=0;
 bool dash_pressed=0;
-bool dash=0;
+//bool dash=0;
 double interval=0.09539;
 
 
@@ -41,13 +45,23 @@ bool why_are_you_running=0;
 bool isJumping =0;
 bool Falling=0;
 bool onFloor =0;
+bool double_Jump=0;
+bool wall_grab=0;
+bool wall_right=0;
+bool wall_left=0;
 float Time = 0;
 float dashTime=12;
+float second_jump_Time=1;
 float gravity = gravity_const;
+
+bool bruh_wo1=0;
+bool bruh_wo2=0;
+bool bruh_wo3=0;
 
 
 void Player::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
+
     target.draw(Player_Box[0], states);
 }
 void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -77,19 +91,68 @@ Player_Sounds::Player_Sounds()
     Buffer_jump.loadFromFile("SFX_Jump_09.wav");
     Sound_jump.setBuffer(Buffer_jump);
     Sound_jump.setVolume(60);
+
+    Buffer_double_jump.loadFromFile("SFX_Jump_42.wav");
+    Sound_Double_jump.setBuffer(Buffer_double_jump);
+    Sound_Double_jump.setVolume(60);
+
+    Bruh_buffer.loadFromFile("Bruh Sound Effect #2.ogg");
+    Bruh_sound.setBuffer(Bruh_buffer);
+    Bruh_sound.setVolume(120);
+
+    yamete_buffer.loadFromFile("Yamete kudasai sound effect.ogg");
+    yamete_sound.setBuffer(yamete_buffer);
+    yamete_sound.setVolume(120);
+
+
+
+
     Buffer_run.loadFromFile("step_cloth1.ogg");
     You_say_run.setBuffer(Buffer_run);
     You_say_run.setVolume(80);
     You_say_run.setLoop(true);
 
 }
-void Player_Sounds::Sound_movement(int window_value)
+void Player_Sounds::Sound_movement(int window_value, std::vector<bool> bruh)
 {
     if(window_value==6)
     {
+
+        if(bruh[0])
+        {
+            if(!bruh_wo1)
+            {
+                Bruh_sound.setPlayingOffset(sf::seconds(0.5));
+            Bruh_sound.play();
+            bruh_wo1=1;
+            }
+        }
+        if(bruh[1])
+        {
+            if(!bruh_wo2)
+            {
+                Bruh_sound.setPlayingOffset(sf::seconds(0.5));
+            Bruh_sound.play();
+            bruh_wo2=1;
+            }
+        }
+        if(bruh[2])
+        {
+            if(!bruh_wo3)
+            {
+                yamete_sound.setPlayingOffset(sf::seconds(0.4));
+            yamete_sound.play();
+            bruh_wo3=1;
+            }
+        }
+
      if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)&& isJumping==0 && Falling==0)
      {
          Sound_jump.play();
+     }
+     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.3)
+     {
+         Sound_Double_jump.play();
      }
      if((sf::Keyboard::isKeyPressed(sf::Keyboard::A) && isJumping==0 && Falling==0)||( sf::Keyboard::isKeyPressed(sf::Keyboard::D) && isJumping==0 && Falling==0) )
      {
@@ -163,7 +226,10 @@ Player_Animation::Player_Animation()
 
 sf::IntRect Player_Animation::getCurrentRect(int Current_frame, float Second)
 {
-
+    if(wall_grab)
+    {
+        return wall_grabAnimation;
+    }
     if(dash_pressed)
     {
         std::cout<<Current_frame<<"     "<<dashTime<<"     "<<interval<<std::endl;
@@ -181,10 +247,7 @@ sf::IntRect Player_Animation::getCurrentRect(int Current_frame, float Second)
     {
         return runningAnimation[Current_frame];
     }
-    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::H))
-    {
-        return wall_grabAnimation;
-    }
+
     else if(!(sf::Keyboard::isKeyPressed(sf::Keyboard::A)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) || !(sf::Keyboard::isKeyPressed(sf::Keyboard::H)))
     {
         return idleAnimation[Current_frame];
@@ -221,16 +284,12 @@ int Player_Animation ::Dash()
 
         if(dashTime>interval)
         {
-
-
-
-
             CurrentDash_frame++;
             interval+=0.095/*39*/;
 
             if(CurrentDash_frame>5)
             {
-                            std::cout<<"dash"<<std::endl;
+                std::cout<<"dash"<<std::endl;
                 CurrentDash_frame=0;
                 interval=0.09539;
             }
@@ -281,6 +340,7 @@ void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 
 
 
+
         if(left)
         {
             Texture_Box[0].setScale(-4,4);
@@ -301,13 +361,62 @@ sf::Vector2f Player::Position()
     return Player_Box[0].getPosition();
 }
 
-void Player::Movement_Again(float Second, int window_value)
+sf::FloatRect Player::Player_bounds()
+{
+    return Player_Box[0].getGlobalBounds();
+}
+
+float Player::camera_position(float Second, int window_value, float current_position)
+{
+     sf::Vector2f player_position = Position();
+    if(window_value==6)
+    {
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+        {
+            if(!P_pressed)
+            {
+                P_pressed=1;
+                Free_movement_camera=!Free_movement_camera;
+            }
+        }
+        else
+            P_pressed=0;
+
+        if(!Free_movement_camera)
+        {
+            if(player_position.y>650)
+                return 540;
+            else
+                return (player_position.y-100);
+        }
+        else
+        {
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
+                return current_position +camera_speed;
+            }
+            else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {
+                return current_position-camera_speed;
+            }
+            else
+                return current_position;
+        }
+    }
+
+
+}
+
+void Player::Movement_Again(float Second, int window_value, bool D_jump, bool dash_ability, bool wall_climb)
 {
 
 
 
     if(window_value==6)
     {
+        dashTime+=Second;
+        second_jump_Time+=Second;
 
         if(!dash_pressed)
             velocity.x=0.f;
@@ -329,18 +438,40 @@ void Player::Movement_Again(float Second, int window_value)
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==0 && Falling==0)
         {
             velocity.y =jump_speed;
-
+            second_jump_Time=0;
             isJumping=1;
         }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.3 && D_jump==1)
+        {
+            //std::cout<<"velocity.y"<<std::endl;
+            velocity.y =jump_speed;
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::C) && dashTime>1.f)
+            double_Jump=1;
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::C) && dashTime>1.f && dash_ability==1)
         {
             if(left) { velocity.x =-1500.f; }
             else { velocity.x =1500.f; }
             dashTime=0;
             dash_pressed=1;
         }
-        dashTime+=Second;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::F) && (wall_right==1 || wall_left==1) && wall_climb==1)
+        {
+            velocity.x=0;
+            velocity.y=0;
+            wall_grab=1;
+
+        }
+        else
+        {
+            wall_grab=0;
+        }
+
+
+//        std::cout<<wall_grab<<"    "<<wall_left<<"    "<<wall_right<<std::endl;
+
+
             velocity.y += gravity_const;
 
             if(dash_pressed)
@@ -360,10 +491,6 @@ void Player::Movement_Again(float Second, int window_value)
 
             }
 
-
-        //std::cout<<velocity.y<<std::endl;
-
-
         if (velocity.y>20.f )
         {
             Falling=1;
@@ -380,6 +507,9 @@ void Player::Collisions(float Second,int window_value)
 
         sf::Vector2f reaction;
         sf::FloatRect Player_bounds = Player_Box[0].getGlobalBounds();
+
+
+
         for(auto &i : Collision_Box)
         {
 
@@ -408,6 +538,7 @@ void Player::Collisions(float Second,int window_value)
         {
             velocity.y=0;
             isJumping=0;
+            double_Jump=0;
             Falling=0;
         }
         if(reaction.y>0)
@@ -426,6 +557,7 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
     bool isIntersecting_left=1;
     bool isIntersecting_right=1;
 
+
     if(!Platform.intersects(Player))
     {
         return {};
@@ -434,49 +566,65 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
     //edges check
     if(Platform.top<Player.top)                 //Player below top edge of platform
     {
+        wall_right=0;
+        wall_left=0;
 
         isIntersecting_top=0;
     }
 
     if(Platform.top+Platform.height>Player.top+Player.height)//Player above bottom edge of platform
     {
+        wall_right=0;
+        wall_left=0;
         isIntersecting_bottom=0;
     }
 
     if(Platform.left+Platform.width>Player.left+Player.width)//Player on right side of left platform
     {
+        wall_left=0;
         isIntersecting_right=0;
     }
 
     if(Platform.left<Player.left)//Player on left side of right platform
     {
+        wall_right=0;
+
         isIntersecting_left=0;
     }
     //reaction to edges
     sf::Vector2f reaction;
-    if(isIntersecting_top && isIntersecting_bottom){}
-
-    else if(isIntersecting_top)
-    {
-//        std::cout<<"Top"<<std::endl;
-        reaction.y = Platform.top-(Player.top+Player.height);
-    }
-    else if(isIntersecting_bottom)
-    {
-//        std::cout<<"Bottom"<<std::endl;
-        reaction.y = (Platform.top+Platform.height)-Player.top;
-    }
 
     if (isIntersecting_left)
     {
-        //std::cout<<"Left"<<std::endl;
+       // std::cout<<"Left"<<std::endl;
+        wall_right=1;
         reaction.x = Platform.left-(Player.left+Player.width);
     }
     else if(isIntersecting_right)
     {
         //std::cout<<"right"<<std::endl;
+        wall_left=1;
         reaction.x = (Platform.left+Platform.width)-Player.left;
     }
+
+    if(isIntersecting_top && isIntersecting_bottom){}
+
+    else if(isIntersecting_top)
+    {
+//        std::cout<<"Top"<<std::endl;
+        wall_right=0;
+        wall_left=0;
+        reaction.y = Platform.top-(Player.top+Player.height);
+    }
+    else if(isIntersecting_bottom)
+    {
+//        std::cout<<"Bottom"<<std::endl;
+        wall_right=0;
+        wall_left=0;
+        reaction.y = (Platform.top+Platform.height)-Player.top;
+    }
+
+
 
     return reaction;
 

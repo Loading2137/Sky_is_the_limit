@@ -224,8 +224,7 @@ Map_Texture::Map_Texture()
 
     Pop_up.loadFromFile("Pop_up.png");
     Pop_up_window.setTexture(Pop_up);
-//    Black_Background.setSize(sf::Vector2f(1520.f,500.f));
-//    Black_Background.setFillColor(sf::Color (89,84,84));
+
 
 
 

@@ -24,6 +24,8 @@ std::vector<bool> penetrator_bool;
 bool left=0;
 bool already_playing=0;
 bool dash_active=0;
+bool bar_active=0;
+sf::Vector2f bar_speed= (sf::Vector2f(80.f,0));
 
 
 //Gravity
@@ -63,6 +65,8 @@ Player::Player()
     sf::RectangleShape Player(sf::Vector2f(32.f,64.f));
     Player.setPosition(1200.f,900.f);
     Player_Box.push_back(Player);
+
+
 }
 
 sf::Vector2f Player::getPosition(int number_of_saves, sf::Vector2f Spawn)
@@ -132,20 +136,13 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
 
         if(!dash_active)
             velocity.x=0.f;
-//        velocity.y=0.f;
+
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) && dash_active==0) {
             velocity.x = -movement_speed;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) && dash_active==0) {
             velocity.x = movement_speed;
         }
-//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-//            velocity.y = movement_speed/2;
-//        }
-
-//        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-//            velocity.y = -movement_speed/2;
-//        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==0 && Falling==0)
         {
@@ -153,15 +150,14 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
             second_jump_Time=0;
             isJumping=1;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.3 && abilities[1])
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.35 && abilities[1])
         {
-            //std::cout<<"velocity.y"<<std::endl;
             velocity.y =jump_speed;
 
             double_Jump=1;
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::C) && dashTime>1.f && abilities[2])
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::C) && dashTime>5.f && abilities[2])
         {
             if(left) { velocity.x =-1500.f; }
             else { velocity.x =1500.f; }
@@ -179,9 +175,6 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
         {
             wall_grab=0;
         }
-
-
-//        std::cout<<wall_grab<<"    "<<wall_left<<"    "<<wall_right<<std::endl;
 
 
             velocity.y += gravity_const;
@@ -344,7 +337,23 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
 }
 
 
+
 //###########################################################################################################
+void Player_Animation::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    if(bruh_wo3)
+    {
+    target.draw(dash_bar, states);
+    target.draw(dash_outline1, states);
+    target.draw(dash_outline2, states);
+    target.draw(dash_outline3, states);
+    target.draw(dash_outline4, states);
+    }
+
+
+}
+
+
 Player_Animation::Player_Animation()
 {
    idleAnimation.push_back(sf::IntRect(28, 0, 8, 16));
@@ -373,6 +382,21 @@ Player_Animation::Player_Animation()
 
 
    wall_grabAnimation= sf::IntRect(1432, 0, 10, 16);
+
+   dash_outline1.setSize(sf::Vector2f(10.f, 80.f));
+   dash_outline2.setSize(sf::Vector2f(400.f, 10.f));
+   dash_outline3.setSize(sf::Vector2f(10.f, 80.f));
+   dash_outline4.setSize(sf::Vector2f(400.f, 10.f));
+
+   dash_bar.setSize(sf::Vector2f(400.f, 80.f));
+
+   dash_outline1.setFillColor(sf::Color(160, 122, 214));
+   dash_outline2.setFillColor(sf::Color(160, 122, 214));
+   dash_outline3.setFillColor(sf::Color(160, 122, 214));
+   dash_outline4.setFillColor(sf::Color(160, 122, 214));
+   dash_bar.setFillColor(sf::Color(255,0,0));
+
+
 
 }
 
@@ -462,7 +486,58 @@ int Player_Animation ::Dash()
 
 }
 
+void Player_Animation::dash_bar_animation(float Position, float Second)
+{
 
+    dash_outline1.setPosition(0.f, Position-540.f);
+    dash_outline2.setPosition(0.f, Position-540.f);
+    dash_outline3.setPosition(390.f, Position-540.f);
+    dash_outline4.setPosition(0.f, Position-470.f);
+
+    if(bar_active)
+    {
+
+        if(dash_bar.getGlobalBounds().left>0)
+        {
+            std::cout<<"bar_active<<"   "<<bar_speed.x<<"   "<<dash_bar.getGlobalBounds().left"<<std::endl;
+            bar_active=0;
+        }
+        else
+        {
+            dash_bar.move(bar_speed*Second);
+            dash_bar.setPosition(dash_bar.getPosition().x,Position-540.f);
+        }
+
+
+    }
+    else
+    {
+
+        dash_bar.setPosition(0.f,Position-540.f);
+    }
+
+    if(dash_active)
+    {
+        if(!bar_active)
+        {
+            bar_active=1;
+           dash_bar.setPosition(-400.f,Position-540.f);
+
+        }
+
+
+
+    }
+
+
+
+    std::cout<<bar_active<<"   "<<bar_speed.x<<"   "<<dash_bar.getGlobalBounds().left<<std::endl;
+
+
+
+
+
+}
 //###########################################################################################################
 void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
@@ -477,6 +552,9 @@ Player_Texture::Player_Texture()
     Player.setScale(4,4);
     Player.setPosition(sf::Vector2f(1200.f,900.f));
     Texture_Box.push_back(Player);
+
+
+
 }
 
 void Player_Texture::Movement_T(sf::Vector2f position, float Second)
@@ -565,7 +643,7 @@ void Player_Sounds::Sound_movement(int window_value, std::vector<bool> bruh)
     if(window_value==6)
     {
 
-        std::cout<<bruh_wo1<<"   "<<bruh_wo2<<"   "<<bruh_wo3<<"   "<<bruh_wo4<<"   "<<std::endl;
+        //std::cout<<bruh_wo1<<"   "<<bruh_wo2<<"   "<<bruh_wo3<<"   "<<bruh_wo4<<"   "<<std::endl;
 
         if(bruh[0])
         {

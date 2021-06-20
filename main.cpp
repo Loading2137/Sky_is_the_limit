@@ -90,13 +90,13 @@ int main()
 
     //    Window_value Setup
     //    value 1 - main menu
-    //    value 2 - saves menu
+    //    value 2 - Load menu
     //    value 3 - setting menu
-    //    value 4 - resize menu
-    //    value 5 - pause menu
+    //    value 4 - Graphics menu
+    //    value 5 - Resize menu
     //    value 6 - actual game
-    //    value 1
-    //    value 1
+    //    value 7 - Pause menu
+    //    value 8 - file choose menu
 
 
 
@@ -130,10 +130,10 @@ int main()
 
 
 
-    sf::Vector2f Top (scale_factor*200.0, scale_factor*200.0);
-    sf::Vector2f Middle (scale_factor*200.0, scale_factor*500.0);
-    sf::Vector2f Bottom (scale_factor*200.0, scale_factor*800.0);
-    sf::Vector2f Common_scale (scale_factor*2,scale_factor*2);
+    sf::Vector2f Top (200.0, 200.0);
+    sf::Vector2f Middle (200.0, 500.0);
+    sf::Vector2f Bottom (200.0, 800.0);
+    sf::Vector2f Common_scale (2,2);
 
 //#####################################################################################
 //Main menu
@@ -200,8 +200,8 @@ int main()
     sf::Sprite Empty2;
     sf::Sprite Empty3;
     Empty1.setPosition(Top);
-    Empty2.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*400));
-    Empty3.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*600));
+    Empty2.setPosition(sf::Vector2f(200.f,400));
+    Empty3.setPosition(sf::Vector2f(200.f,600));
     Empty_Texture.loadFromFile("Empty.png");
     Empty1.setTexture(Empty_Texture);
     Empty2.setTexture(Empty_Texture);
@@ -217,13 +217,13 @@ int main()
     Save_1.setScale(Common_scale);
 
     sf::Sprite Save_2;
-    Save_2.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*400));
+    Save_2.setPosition(sf::Vector2f(200.f,400));
     Save2_Texture.loadFromFile("Save_2.png");
     Save_2.setTexture(Save2_Texture);
     Save_2.setScale(Common_scale);
 
     sf::Sprite Save_3;
-    Save_3.setPosition(sf::Vector2f(scale_factor*200.f,scale_factor*600));
+    Save_3.setPosition(sf::Vector2f(200.f,600));
     Save3_Texture.loadFromFile("Save_3.png");
     Save_3.setTexture(Save3_Texture);
     Save_3.setScale(Common_scale);
@@ -270,13 +270,13 @@ int main()
     Window_Resize.setScale(Common_scale);
 
     sf::Sprite Toggle1;
-    Toggle1.setPosition(scale_factor*200.0,scale_factor*420.0);
+    Toggle1.setPosition(Middle);
     Toggle_Texture.loadFromFile("img_522367.png");
     Toggle1.setTexture(Toggle_Texture);
     Toggle1.setScale(scale_factor*0.2,scale_factor*0.2);
 
     sf::Sprite Toggle2;
-    Toggle2.setPosition(scale_factor*200.0,scale_factor*575.0);
+    Toggle2.setPosition(Middle);
     RTX_Texture.loadFromFile("rtx.png");
     Toggle2.setTexture(RTX_Texture);
     Toggle2.setScale(Common_scale);
@@ -290,6 +290,22 @@ int main()
     bool Toggle1_option=1;
     bool Toggle2_option=1;
     bool Mouse_pressed=0;
+
+
+    sf::Font font_;
+    sf::Text RTX_Text;
+    font_.loadFromFile("OpenSans-Bold.ttf");
+    RTX_Text.setFont(font_);
+    RTX_Text.setCharacterSize(69);
+    RTX_Text.setPosition(500.f,Middle.y);
+    RTX_Text.setString("Does absolutly nothing");
+
+    sf::Text Audio_Text;
+    font_.loadFromFile("OpenSans-Bold.ttf");
+    Audio_Text.setFont(font_);
+    Audio_Text.setCharacterSize(69);
+    Audio_Text.setPosition(Top);
+    Audio_Text.setString("Turn ON/OFF ambient sounds of the game");
 
 //#####################################################################################
 //Resize Menu
@@ -311,21 +327,49 @@ int main()
     r1280.setScale(Common_scale);
 
     sf::Sprite r1920;
-    r1920.setPosition(scale_factor*850.0, scale_factor*200.0);
+    r1920.setPosition(850.0, 200.0);
     r1920t.loadFromFile("1920.png");
     r1920.setTexture(r1920t);
     r1920.setScale(Common_scale);
 
     sf::Sprite r2560;
-    r2560.setPosition(scale_factor*850.0, scale_factor*500.0);
+    r2560.setPosition(850.0, 500.0);
     r2560t.loadFromFile("2560.png");
     r2560.setTexture(r2560t);
     r2560.setScale(Common_scale);
 
+
+//#####################################################################################
+//Pause Menu
+
+
+    sf::Texture Back_Texture;
+    sf::Texture Resume_Texture;
+
+
+    sf::Sprite Back;
+    Back.setPosition(Bottom);
+    Back_Texture.loadFromFile("Back.png");
+    Back.setTexture(Back_Texture);
+    Back.setScale(Common_scale);
+
+    sf::Sprite Resume;
+    Resume.setPosition(Top);
+    Resume_Texture.loadFromFile("Resume.png");
+    Resume.setTexture(Resume_Texture);
+    Resume.setScale(Common_scale);
+
+
+
+
+
+
+
+
 //#####################################################################################
     Player p1;
     Level_Platforms p2;
-    //Level_Walls p3;
+    Player_Animation p3;
     Player_Texture p4;
     BackGround p5;
     Player_Sounds p6;
@@ -334,11 +378,9 @@ int main()
 
 
 
+    bool pause_menu=0;
 
-    sf::SoundBuffer buffer;
-    buffer.loadFromFile("SFX_Jump_09.wav");
-    sf::Sound sound;
-    sound.setBuffer(buffer);
+
 
 
     const float MaxDelta=0.1;
@@ -775,7 +817,7 @@ window.setView(view);
                     mouse_pos.x<= Settings.getGlobalBounds().left+Settings.getGlobalBounds().width &&
                     mouse_pos.y>= Settings.getGlobalBounds().top &&
                     mouse_pos.y<= Settings.getGlobalBounds().top+Settings.getGlobalBounds().height
-                    && window_value==1)
+                    && (window_value==1 || window_value==7) )
             {
                 if(!Mouse_pressed)
                 {
@@ -812,7 +854,7 @@ window.setView(view);
                     mouse_pos.x<= Toggle1.getGlobalBounds().left+Toggle1.getGlobalBounds().width &&
                     mouse_pos.y>= Toggle1.getGlobalBounds().top &&
                     mouse_pos.y<= Toggle1.getGlobalBounds().top+Toggle1.getGlobalBounds().height
-                    && window_value==4)
+                    && window_value==9)
             {
                 if(!Mouse_pressed)
                 {
@@ -858,44 +900,41 @@ window.setView(view);
                     mouse_pos.x<= Exit.getGlobalBounds().left+Exit.getGlobalBounds().width &&
                     mouse_pos.y>= Exit.getGlobalBounds().top &&
                     mouse_pos.y<= Exit.getGlobalBounds().top+Exit.getGlobalBounds().height
-                    && (window_value==2 || window_value==3 || window_value==4 || window_value==5
-                    || window_value ==7 ||window_value==8))
+                    && (window_value==2  || window_value ==7 ))
             {
                 if(!Mouse_pressed)
                 {
                     if(window_value==7)
                     {
-                    if(Current_Save==1)
-                    {
-                        Save1.open("Save1", std::ios::out);
-                        Saving(Save1, p1.Position(), p7.is_chest_open());
-                        Save1.close();
-                        p7.reset();
-                        p6.reset();
-                    }
-                    if(Current_Save==2)
-                    {
-                        Save2.open("Save2", std::ios::out);
-                        Saving(Save2, p1.Position(), p7.is_chest_open());
-                        Save2.close();
-                        p7.reset();
-                        p6.reset();
-                    }
-                    if(Current_Save==3)
-                    {
-                        Save3.open("Save3", std::ios::out);
-                        Saving(Save3, p1.Position(), p7.is_chest_open());
-                        Save3.close();
-                        p7.reset();
-                        p6.reset();
+                        if(Current_Save==1)
+                        {
+                            Save1.open("Save1", std::ios::out);
+                            Saving(Save1, p1.Position(), p7.is_chest_open());
+                            Save1.close();
+                            p7.reset();
+                            p6.reset();
+                        }
+                        if(Current_Save==2)
+                        {
+                            Save2.open("Save2", std::ios::out);
+                            Saving(Save2, p1.Position(), p7.is_chest_open());
+                            Save2.close();
+                            p7.reset();
+                            p6.reset();
+                        }
+                        if(Current_Save==3)
+                        {
+                            Save3.open("Save3", std::ios::out);
+                            Saving(Save3, p1.Position(), p7.is_chest_open());
+                            Save3.close();
+                            p7.reset();
+                            p6.reset();
 
+                        }
                     }
-
-
-                }
-                    Mouse_pressed=1;
                     window_value=1;
-            }
+                    Mouse_pressed=1;
+                }
             }
 
             //Resize
@@ -967,6 +1006,80 @@ window.setView(view);
                 screen_height = 1440 ;
                 }
             }
+            else if(mouse_pos.x>= Resume .getGlobalBounds().left &&
+                    mouse_pos.x<= Resume.getGlobalBounds().left+Resume.getGlobalBounds().width &&
+                    mouse_pos.y>= Resume.getGlobalBounds().top &&
+                    mouse_pos.y<= Resume.getGlobalBounds().top+Resume.getGlobalBounds().height
+                    && window_value==7 )
+            {
+                if(!Mouse_pressed)
+                {
+                Mouse_pressed=1;
+                window_value=6;
+                }
+            }
+            else if(mouse_pos.x>= Back .getGlobalBounds().left &&
+                    mouse_pos.x<= Back.getGlobalBounds().left+Back.getGlobalBounds().width &&
+                    mouse_pos.y>= Back.getGlobalBounds().top &&
+                    mouse_pos.y<= Back.getGlobalBounds().top+Back.getGlobalBounds().height
+                    && (window_value==7 || window_value==2  || window_value==3 || window_value==4
+                        || window_value==5  || window_value==8 || window_value==9))
+            {
+                if(!Mouse_pressed)
+                {
+                    if(window_value==2)
+                    {
+                        window_value=1;
+                    }
+                    if(window_value==3)
+                    {
+                        if(pause_menu)
+                        {
+                           window_value=7;
+                        }
+                        else
+                            window_value=1;
+                    }
+                    if(window_value==4)
+                    {
+                        window_value=3;
+                    }
+                    if(window_value==5)
+                    {
+                        window_value=4;
+                    }
+                    if(window_value==8)
+                    {
+                        window_value=2;
+                    }
+                    if(window_value==9)
+                    {
+                        window_value=3;
+                    }
+
+
+
+                Mouse_pressed=1;
+
+                }
+            }
+            else if(mouse_pos.x>= Audio .getGlobalBounds().left &&
+                    mouse_pos.x<= Audio.getGlobalBounds().left+Audio.getGlobalBounds().width &&
+                    mouse_pos.y>= Audio.getGlobalBounds().top &&
+                    mouse_pos.y<= Audio.getGlobalBounds().top+Audio.getGlobalBounds().height
+                    && window_value==3)
+            {
+                if(!Mouse_pressed)
+                {
+                    window_value=9;
+
+
+
+                Mouse_pressed=1;
+
+                }
+            }
+
 
 
         }else Mouse_pressed=0;
@@ -978,6 +1091,7 @@ window.setView(view);
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             window_value=7;
+            pause_menu=1;
         }
 
     }
@@ -1002,6 +1116,7 @@ window.setView(view);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
         p7.placement(p1.Player_bounds());
         p7.key_animation(Second, p1.camera_position(window_value, view.getCenter().y));
+        p3.dash_bar_animation(view.getCenter().y, Second);
 
         window.clear(sf::Color::Black);
 
@@ -1026,22 +1141,26 @@ window.setView(view);
             }
 
             window.draw(Load);
-            window.draw(Exit);
+            window.draw(Back);
         }
         else if (window_value==3)       //Settings menu
         {
             window.draw(Background);
             window.draw(Audio);
             window.draw(Graphics);
-            window.draw(Exit);
+            window.draw(Back);
         }
         else if (window_value==4)       //Graphics menu
         {
             window.draw(Background);
             window.draw(Window_Resize);
-            window.draw(Toggle1);
+
             window.draw(Toggle2);
-            window.draw(Exit);
+            if(!Toggle2_option)
+            {
+                window.draw(RTX_Text);
+            }
+            window.draw(Back);
 
         }
         else if (window_value==5)       //Resize menu
@@ -1051,11 +1170,11 @@ window.setView(view);
             window.draw(r1280);
             window.draw(r1920);
             window.draw(r2560);
-            window.draw(Exit);
+            window.draw(Back);
         }
         else if(window_value==6)        //actual game
         {
-            if(ambient_playing==0)
+            if(ambient_playing==0 && Toggle1_option)
             {
                 music.play();
                 ambient_playing=1;
@@ -1063,17 +1182,20 @@ window.setView(view);
             window.draw(p1);
             window.draw(p5);
             window.draw(p2);
-            window.draw(p7);
-//            window.draw(p8);
+
             window.draw(p4);
+            window.draw(p3);
+            window.draw(p7);
 
         }
         else if (window_value==7)       //Pause menu
         {
 
            window.draw(Background);
-        //add resume and menu
+           window.draw(Resume);
+           window.draw(Settings);
            window.draw(Exit);
+
         }
         else if (window_value==8)       //file choose menu
         {
@@ -1097,7 +1219,16 @@ window.setView(view);
             else
                 window.draw(Empty3);
 
-            window.draw(Exit);
+            window.draw(Back);
+        }
+        else if (window_value==9)
+        {
+            window.draw(Background);
+            window.draw(Audio_Text);
+            window.draw(Toggle1);
+
+
+            window.draw(Back);
         }
 
         if (window_value!=6)

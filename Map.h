@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <fstream>
-
+//###########################################################################################################
 class Tutorial
 {
     std::vector<sf::Sprite> Tutorial_Box;
@@ -16,7 +16,7 @@ public:
     sf::IntRect getCurrentRect(int Current_frame);
 };
 
-
+//###########################################################################################################
 class Map_Texture    : public sf::Drawable
 {
     std::vector<sf::Sprite> Texture_Box;
@@ -67,7 +67,7 @@ public:
     void reset();
 };
 
-
+//###########################################################################################################
 class Level_Platforms :public sf::Drawable
 {
     sf::Texture Walls_Texture;
@@ -83,7 +83,7 @@ public:
 
 };
 
-
+//###########################################################################################################
 class BackGround :public sf::Drawable
 {
     sf::Sprite BackGround_T;
@@ -93,3 +93,4 @@ public:
     BackGround();
 
 };
+//###########################################################################################################

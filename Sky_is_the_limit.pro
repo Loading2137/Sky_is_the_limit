@@ -4,7 +4,6 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
-        Colision.cpp \
         Map.cpp \
         Player.cpp \
         main.cpp
@@ -17,6 +16,5 @@ SOURCES += \
         }
 
 HEADERS += \
-    Colision.h \
     Map.h \
     Player.h

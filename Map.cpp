@@ -4,32 +4,27 @@
 #include <SFML/Graphics.hpp>
 #include <Player.h>
 #include <Map.h>
-#include <Colision.h>
 #include <string>
 #include <fstream>
 
 
-
-//int screen_width;
-//int screen_height;
 double scale_factor;
 bool chest1_open=0;
 bool chest2_open=0;
 bool chest3_open=0;
+bool chest4_open=0;
+
+
+bool chest1_open_lastframe=0;
+bool chest2_open_lastframe=0;
+bool chest3_open_lastframe=0;
+bool chest4_open_lastframe=0;
+
+bool window_open=0;
 
 bool fresh_file=1;
 int Tutorial_part=1;
 bool already_preesed=0;
-
-bool D_jump=0;
-bool dash_ability=0;
-bool wall_climb=0;
-
-
-
-
-
-
 
 //###########################################################################################################
 float Time_k=0;
@@ -41,7 +36,7 @@ Tutorial::Tutorial()
     keyAnimation.push_back(sf::IntRect(141, 10, 125, 150));
     keyAnimation.push_back(sf::IntRect(270, 10, 125, 150));
 }
-sf::IntRect Tutorial::getCurrentRect(int Current_frame, float Second)
+sf::IntRect Tutorial::getCurrentRect(int Current_frame)
 {
 
         return keyAnimation[Current_frame];
@@ -59,7 +54,7 @@ int Tutorial ::step(float Second, double animation_fps)
         {
             Current_frame++;
             Time_k= Time_k- time_between_frames;
-            if(Current_frame ==3)//frames.size())
+            if(Current_frame ==3)
             {
                 Current_frame=0;
             }
@@ -78,38 +73,127 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(Texture_Box[0],states);
     target.draw(Texture_Box[1],states);
     target.draw(Texture_Box[2],states);
+    target.draw(Texture_Box[3],states);
     if(fresh_file)
     {
         if(Tutorial_part==1)
         {
-            target.draw(Black_Background,states);
+
+            target.draw(Pop_up_window,states);
             target.draw(Texture_Box[7],states);
             target.draw(Texture_Box[9],states);
             target.draw(Tutorial1_1,states);
             target.draw(Tutorial1_2,states);
             target.draw(Tutorial1_3,states);
             target.draw(Tutorial1_4,states);
+            window_open=1;
         }
-//        if(Tutorial_part==2)
-//        {
+        if(Tutorial_part==2)
+        {
+            target.draw(Pop_up_window,states);
+            target.draw(Texture_Box[5],states);
+            target.draw(Tutorial1_1,states);
+            target.draw(Tutorial1_2,states);
+            target.draw(Tutorial1_3,states);
+            target.draw(Tutorial1_4,states);
+            window_open=1;
 
-//        }
+
+        }
+
+        if(chest1_open && !chest1_open_lastframe)
+        {
+            if(!window_open)
+            {
+            Tutorial_part=4;
+            window_open=1;
+            }
+        }
+        if(chest2_open && !chest2_open_lastframe )
+        {
+            if(!window_open)
+            {
+            Tutorial_part=6;
+            window_open=1;
+            }
+        }
+        if(chest3_open && !chest3_open_lastframe)
+        {
+            if(!window_open)
+            {
+            Tutorial_part=8;
+            window_open=1;
+            }
+        }
+        if(chest4_open && !chest4_open_lastframe)
+        {
+            if(!window_open)
+            {
+            Tutorial_part=10;
+            window_open=1;
+            }
+        }
+        if(Tutorial_part==4)
+        {
+           target.draw(Pop_up_window,states);
+           target.draw(Tutorial1_1,states);
+           target.draw(Tutorial1_2,states);
+           target.draw(Tutorial1_4,states);
+
+        }
+        if(Tutorial_part==6)
+        {
+           target.draw(Pop_up_window,states);
+           target.draw(Tutorial1_1,states);
+           target.draw(Tutorial1_2,states);
+           target.draw(Tutorial1_3,states);
+           target.draw(Tutorial1_4,states);
 
 
 
+        }
+        if(Tutorial_part==8)
+        {
+           target.draw(Pop_up_window,states);
+           target.draw(Tutorial1_1,states);
+           target.draw(Tutorial1_2,states);
+           target.draw(Tutorial1_4,states);
+           target.draw(Texture_Box[11],states);
 
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        }
+        if(Tutorial_part==10)
+        {
+           target.draw(Pop_up_window,states);
+           target.draw(Tutorial1_1,states);
+           target.draw(Tutorial1_2,states);
+           target.draw(Tutorial1_4,states);
+           target.draw(Texture_Box[10],states);
+
+
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && window_open)
         {
             if(!already_preesed)
             {
             Tutorial_part++;
+             window_open=0;
+            already_preesed=1;
+            }
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::M) )
+        {
+            if(!already_preesed)
+            {
+            Tutorial_part=20;
+            window_open=0;
             already_preesed=1;
             }
         }
         else
             already_preesed=0;
-        //std::cout<<Tutorial_part<<std::endl;
+//        std::cout<<Tutorial_part<<std::endl;
 
 
     }
@@ -136,20 +220,17 @@ Map_Texture::Map_Texture()
     Tutorial1_3.setFillColor(sf::Color::White);
     Tutorial1_4.setFillColor(sf::Color::White);
 
-    Tutorial1_1.setString("Hello traveler,");
-    Tutorial1_2.setString("To move left press:");
-    Tutorial1_3.setString("and to move right press: ");
-    Tutorial1_4.setString("Press ENTER to continue or M to skip all tutorials");
 
 
-    Black_Background.setSize(sf::Vector2f(1520.f,500.f));
-    Black_Background.setFillColor(sf::Color (89,84,84));
+    Pop_up.loadFromFile("Pop_up.png");
+    Pop_up_window.setTexture(Pop_up);
+//    Black_Background.setSize(sf::Vector2f(1520.f,500.f));
+//    Black_Background.setFillColor(sf::Color (89,84,84));
 
 
 
-    Chest_Texture.loadFromFile("Chest.png");
+    Chest_Texture.loadFromFile("Chest_press2.png");
     Door_Texture.loadFromFile("Door.png");
-    W_Texture.loadFromFile("W.png");
     E_Texture.loadFromFile("E.png");
     R_Texture.loadFromFile("R.png");
     A_Texture.loadFromFile("A.png");
@@ -159,11 +240,9 @@ Map_Texture::Map_Texture()
     C_Texture.loadFromFile("C.png");
 
 
-    Chest1.setTexture(Chest_Texture);
-    Chest2.setTexture(Chest_Texture);
-    Chest3.setTexture(Chest_Texture);
+    Chest.setTexture(Chest_Texture);
+
     Door.setTexture(Door_Texture);
-    W.setTexture(W_Texture);
     E.setTexture(E_Texture);
     R.setTexture(R_Texture);
     A.setTexture(A_Texture);
@@ -172,11 +251,46 @@ Map_Texture::Map_Texture()
     F.setTexture(F_Texture);
     C.setTexture(C_Texture);
 
-    Texture_Box.push_back(Chest1);  //0
-    Texture_Box.push_back(Chest2);  //1
-    Texture_Box.push_back(Chest3);  //2
-    Texture_Box.push_back(Door);    //3
-    Texture_Box.push_back(W);       //4
+
+
+
+    Chest_Position.push_back(sf::IntRect(0, 236, 254, 274));
+    Chest_Position.push_back(sf::IntRect(256, 236, 254, 274));
+
+
+    int elements_pushed=0;
+    float grid_size=60.f;
+    map.open("map.txt");
+    int linia ;
+    std::vector <int> platforms;
+
+    while(map>>linia)
+    {
+       platforms.push_back(linia) ;
+    }
+
+    for(int i=0; i<platforms.size(); i+=32)
+    {
+
+        for(int x=0; x<32; x++)
+        {
+            if(platforms[i+x]==2)
+            {
+
+                Texture_Box.push_back(Chest);
+                Texture_Box[elements_pushed].setPosition(x*grid_size,((i/(-32))*grid_size)+985.f);
+                Texture_Box[elements_pushed].setScale(0.35,0.35);
+                Texture_Box[elements_pushed].setTextureRect(Chest_Position[0]);
+                elements_pushed++;
+            }
+
+        }
+    }
+
+    map.close();
+
+
+    Texture_Box.push_back(Door);    //4
     Texture_Box.push_back(E);       //5
     Texture_Box.push_back(R);       //6
     Texture_Box.push_back(A);       //7
@@ -186,74 +300,158 @@ Map_Texture::Map_Texture()
     Texture_Box.push_back(C);       //11
 
 
-    Chest_Position.push_back(sf::IntRect(0, 0, 254, 254));
-    Chest_Position.push_back(sf::IntRect(256, 0, 254, 254));
 
-    Texture_Box[0].setTextureRect(Chest_Position[0]);
-    Texture_Box[1].setTextureRect(Chest_Position[0]);
-    Texture_Box[2].setTextureRect(Chest_Position[0]);
-
-
-    Texture_Box[0].setScale(0.35,0.35);
-    Texture_Box[1].setScale(0.35,0.35);
-    Texture_Box[2].setScale(0.35,0.35);
-
-
-    Texture_Box[0].setPosition(sf::Vector2f(350.f,931.f));
-    Texture_Box[1].setPosition(sf::Vector2f(800.f,291.f));
-    Texture_Box[2].setPosition(sf::Vector2f(400.f,-89.f));
 }
 
 void Map_Texture::key_animation(float Second, float camera)
 {
 
-    sf::IntRect amimation_frame =animation.getCurrentRect(animation.step(Second, 3), Second);
+    sf::IntRect amimation_frame =animation.getCurrentRect(animation.step(Second, 3));
 
-    Tutorial1_1.setPosition(250,camera-400.f);
-    Tutorial1_2.setPosition(250,camera-250.f);
-    Tutorial1_3.setPosition(250,camera-100.f);
-    Tutorial1_4.setPosition(1100,camera+5.f);
-    Black_Background.setPosition(200.f, camera-450.f);
+    Tutorial1_4.setString("Press ENTER to continue or M to skip all tutorials");
+    if(Tutorial_part==1)
+    {
+        Tutorial1_1.setString("Hello traveler,");
+        Tutorial1_2.setString("To move left press:");
+        Tutorial1_3.setString("and to move right press: ");
 
-    Texture_Box[7].setPosition(950.f,camera-280.f);
+    }
+    if(Tutorial_part==2)
+    {
+        Tutorial1_1.setString("To jump press spacebar");
+        Tutorial1_2.setString("and to interact press:");
+        Tutorial1_3.setString("Look a chest, open it! ");
+    }
+    if(Tutorial_part==4)
+    {
+        Tutorial1_1.setString("Unfortunately this chest is empty");
+        Tutorial1_2.setString("Maybe next one will have someting exciting inside");
+
+    }
+
+    if(Tutorial_part==6)
+    {
+        Tutorial1_1.setString("Double jump?");
+        Tutorial1_2.setString("Amazing");
+        Tutorial1_3.setString("By pressing spacebar in mid air you can jump again");
+    }
+
+    if(Tutorial_part==8)
+    {
+        Tutorial1_1.setString("Dashing ability, it sure will come in handy");
+        Tutorial1_2.setString("To dash press: ");
+
+    }
+
+    if(Tutorial_part==10)
+    {
+        Tutorial1_1.setString("Thanks to content of this chest you can hold onto walls");
+        Tutorial1_2.setString("To hold onto wall press and hold: ");
+
+    }
+
+
+    Tutorial1_1.setPosition(250,camera-470.f);
+    Tutorial1_2.setPosition(250,camera-320.f);
+    Tutorial1_3.setPosition(250,camera-170.f);
+    Tutorial1_4.setPosition(1100,camera-65.f);
+    Pop_up_window.setPosition(140.f, camera-540.f);
+
+    Texture_Box[7].setPosition(950.f,camera-350.f);
     Texture_Box[7].setTextureRect(amimation_frame);
 
-    Texture_Box[9].setPosition(950.f,camera-130.f);
+    Texture_Box[9].setPosition(950.f,camera-200.f);
     Texture_Box[9].setTextureRect(amimation_frame);
 
-//    Texture_Box[6].setPosition(900.f,500.f);
-//    Texture_Box[6].setTextureRect(amimation_frame);
+    Texture_Box[5].setPosition(950.f,camera-350.f);
+    Texture_Box[5].setTextureRect(amimation_frame);
+
+    Texture_Box[11].setPosition(800.f,camera-350.f);
+    Texture_Box[11].setTextureRect(amimation_frame);
+
+    Texture_Box[10].setPosition(1150.f,camera-350.f);
+    Texture_Box[10].setTextureRect(amimation_frame);
+
+
 }
 
 void Map_Texture::placement(sf::FloatRect Player_Bounds)
 {
+
+    chest1_open_lastframe=chest1_open;
+    chest2_open_lastframe=chest2_open;
+    chest3_open_lastframe=chest3_open;
+    chest4_open_lastframe=chest4_open;
+
     if(Texture_Box[0].getGlobalBounds().intersects(Player_Bounds))
     {
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         {
-                Texture_Box[0].setTextureRect(Chest_Position[1]);
+
                 chest1_open=1;
-                D_jump=1;
+
         }
     }
     if(Texture_Box[1].getGlobalBounds().intersects(Player_Bounds))
     {
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         {
-                Texture_Box[1].setTextureRect(Chest_Position[1]);
+
                 chest2_open=1;
-                dash_ability=1;
         }
     }
     if(Texture_Box[2].getGlobalBounds().intersects(Player_Bounds))
     {
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
         {
-                Texture_Box[2].setTextureRect(Chest_Position[1]);
+
                 chest3_open=1;
-                wall_climb=1;
         }
     }
+    if(Texture_Box[3].getGlobalBounds().intersects(Player_Bounds))
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+        {
+
+                chest4_open=1;
+        }
+    }
+
+
+    if(chest1_open)
+    {
+        Texture_Box[0].setTextureRect(Chest_Position[1]);
+    }
+    else
+    {
+        Texture_Box[0].setTextureRect(Chest_Position[0]);
+    }
+    if(chest2_open)
+    {
+       Texture_Box[1].setTextureRect(Chest_Position[1]);
+    }
+    else
+    {
+        Texture_Box[1].setTextureRect(Chest_Position[0]);
+    }
+    if(chest3_open)
+    {
+        Texture_Box[2].setTextureRect(Chest_Position[1]);
+    }
+    else
+    {
+        Texture_Box[2].setTextureRect(Chest_Position[0]);
+    }
+    if(chest4_open)
+    {
+        Texture_Box[3].setTextureRect(Chest_Position[1]);
+    }
+    else
+    {
+        Texture_Box[3].setTextureRect(Chest_Position[0]);
+    }
+
+
 
 
 }
@@ -264,26 +462,42 @@ std::vector<bool> Map_Texture::is_chest_open()
     chest_open.push_back(chest1_open);
     chest_open.push_back(chest2_open);
     chest_open.push_back(chest3_open);
+    chest_open.push_back(chest4_open);
 
     return chest_open;
     chest_open.clear();
 
 }
 
-void Map_Texture::is_this_fresh_file(bool it_is)
+void Map_Texture::is_this_fresh_file(bool it_is, std::vector<bool> chest)
 {
     if(it_is)
+    {
        fresh_file=1;
+       chest1_open=chest[0];
+       chest2_open=chest[1];
+       chest3_open=chest[2];
+       chest4_open=chest[3];
+    }
     else
+    {
+
+
         fresh_file=0;
+        chest1_open=chest[0];
+        chest2_open=chest[1];
+        chest3_open=chest[2];
+        chest4_open=chest[3];
+
+    }
 }
 
-std::vector<bool> Map_Texture::abilities()
+void Map_Texture::reset()
 {
-    abilities_bool.push_back(D_jump);
-    abilities_bool.push_back(dash_ability);
-    abilities_bool.push_back(wall_climb);
+  Tutorial_part=1;
+
 }
+
 //###########################################################################################################
 float grid_size=60.f;
 void Level_Platforms::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -299,13 +513,13 @@ Level_Platforms::Level_Platforms()
 {
     Walls_Texture.loadFromFile("Test.png");
     Walls_Texture.setRepeated(true);
-    int elements_pushed=0;
+
 
     sf::RectangleShape Platform (sf::Vector2f(grid_size,grid_size));
-
+    int elements_pushed=0;
     map.open("map.txt");
-    bool linia ;
-    std::vector <bool> platforms;
+    int linia ;
+    std::vector <int> platforms;
 
     while(map>>linia)
     {
@@ -317,7 +531,7 @@ Level_Platforms::Level_Platforms()
 
         for(int x=0; x<32; x++)
         {
-            if(platforms[i+x])
+            if(platforms[i+x]==1)
             {
 
                 single_platform.push_back(Platform);
@@ -325,8 +539,6 @@ Level_Platforms::Level_Platforms()
                 single_platform[elements_pushed].setTexture(&Walls_Texture);
                 single_platform[elements_pushed].setTextureRect(sf::IntRect(0, 0,grid_size,grid_size));
                 elements_pushed++;
-
-
             }
 
         }
@@ -368,12 +580,10 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
     return CakeIsALie;
 }
 
-
-
 //###########################################################################################################
 void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
-    target.draw(BackGround_T);
+    target.draw(BackGround_T, states);
 }
 
 BackGround::BackGround()

@@ -3,6 +3,26 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+
+class Player    :public sf::Drawable
+{
+    std::vector<sf::RectangleShape> Player_Box;
+public:
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    Player();
+    sf::Texture Player_Texture();
+    sf::FloatRect Player_bounds();
+    sf::Vector2f Reaction(sf::FloatRect Platform, sf::FloatRect Player);
+    sf::Vector2f getPosition(int number_of_saves, sf::Vector2f Spawn);
+    sf::Vector2f Position();
+    float camera_position(int window_value, float current_position);
+    void Movement(float Second, int window_value, std::vector<bool> abilities);
+    void Collisions(int window_value);
+    void scale(int scale);
+};
+
+
 class Player_Animation
 {
     std::vector<sf::IntRect> idleAnimation;
@@ -22,33 +42,10 @@ public:
     int Dash();
     int Current_frame=0;
     int CurrentDash_frame=0;
-    sf::IntRect getCurrentRect(int Current_frame, float Second);
+    sf::IntRect getCurrentRect(int Current_frame);
 
 };
 
-class Player    :public sf::Drawable
-{
-    std::vector<sf::RectangleShape> Player_Box;
-
-
-
-public:
-
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    Player();
-    void Movement_Again(float Second, int window_value, bool D_jump, bool dash_ability, bool wall_climb);
-    sf::Vector2f getPosition(int number_of_saves, sf::Vector2f Spawn);
-    sf::Vector2f Position();
-    sf::FloatRect Player_bounds();
-    sf::Texture Player_Texture();
-    void Collisions(float Second,int window_value);
-    void scale(int scale);
-    float camera_position(float Second, int window_value, float current_position);
-    sf::Vector2f Reaction(sf::FloatRect Platform, sf::FloatRect Player);
-
-
-
-};
 
 class Player_Texture    : public sf::Drawable
 {
@@ -56,13 +53,14 @@ class Player_Texture    : public sf::Drawable
     Player_Animation animation;
 
 public:
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    Player_Texture();
     sf::Texture Texture;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    Player_Texture(); 
     void Movement_T(sf::Vector2f position, float Second);
     void scale(int scale);
 
 };
+
 
 class Player_Sounds     :public sf::Sound
 {
@@ -80,7 +78,8 @@ class Player_Sounds     :public sf::Sound
 
 public:
     Player_Sounds();
-
+    void reset();
+    void file_exist(std::vector<bool> chests);
     void Sound_movement(int window_value, std::vector<bool>  bruh);
 
 

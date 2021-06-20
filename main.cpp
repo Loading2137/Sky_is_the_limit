@@ -9,13 +9,17 @@
 #include <Player.h>
 #include <Map.h>
 
-void Saving(std::fstream &Save , sf::Vector2f position)
+void Saving(std::fstream &Save , sf::Vector2f position, std::vector<bool> chests)
 {
 
     //std::cout<<scale_factor<<std::endl;
 
     Save<<position.x+2<<std::endl; //zmień na pozycje
     Save<<position.y+2<<std::endl;
+    Save<<chests[0]<<std::endl;
+    Save<<chests[1]<<std::endl;
+    Save<<chests[2]<<std::endl;
+    Save<<chests[3]<<std::endl;
     //Save1<<scale_factor<<std::endl;
 
 }
@@ -98,7 +102,7 @@ int main()
 
 
 //###############################################################################################################
-    int window_value=6;
+    int window_value=1;
 
     float Time = 0;
 
@@ -192,9 +196,6 @@ int main()
     Continue_Game.setTexture(Continue_Game_Texture);
     Continue_Game.setScale(Common_scale);
 
-//    sf::Vector2f Top (scale_factor*200.0, scale_factor*200.0);
-//    sf::Vector2f Middle (scale_factor*200.0, scale_factor*500.0);
-//    sf::Vector2f Bottom (scale_factor*200.0, scale_factor*800.0);
     sf::Sprite Empty1;
     sf::Sprite Empty2;
     sf::Sprite Empty3;
@@ -340,7 +341,7 @@ int main()
     sound.setBuffer(buffer);
 
 
-
+    const float MaxDelta=0.1;
 
     while (window.isOpen()) {
 
@@ -353,10 +354,15 @@ int main()
         }
 
         sf::Time Delta = deltaClock.restart();
+
         float Second = Delta.asSeconds();
+        if(Second>MaxDelta)
+            Second=MaxDelta;
+
+
 if(window_value==6)
 {
-         view.setCenter(960,p1.camera_position(Second, window_value, view.getCenter().y));
+         view.setCenter(960,p1.camera_position(window_value, view.getCenter().y));
 }
 else
 {
@@ -365,13 +371,11 @@ else
 window.setView(view);
 
 
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-           // sf::Vector2i mouse_pos = sf::Mouse::getPosition(window);
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        {
         sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-            mouse_pos.x = mouse_pos.x;//scale_factor;
-            mouse_pos.y = mouse_pos.y;//scale_factor;
-//            std::cout<<mouse_pos.x<<"  "<<mouse_pos.y<<std::endl;
+
             //Load menu
             if(mouse_pos.x>= Start.getGlobalBounds().left &&
                     mouse_pos.x<= Start.getGlobalBounds().left+Start.getGlobalBounds().width &&
@@ -393,14 +397,20 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=6;
-                Current_Save=1;
-                if_file_exist[0]=1;
-                number_of_saves++;
-                Save1.open("Save1", std::ios::out );
-                Save1.close();
-                p7.is_this_fresh_file(1);
+                    Mouse_pressed=1;
+                    window_value=6;
+                    Current_Save=1;
+                    number_of_saves++;
+                    Save1.open("Save1", std::ios::out );
+                    Save1.close();
+                    std::vector<bool> chest;
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                    if_file_exist[0]=1;
+                    p7.is_this_fresh_file(1, chest);
+                    chest.clear();
                 }
             }
             if(mouse_pos.x>= Continue_Game.getGlobalBounds().left &&
@@ -411,27 +421,59 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-
-                Save1.open("Save1");
-                std::string linia ;
-                int nr_lini=1;
-                for(int i = 0; i<2; i++)
-                {
-                    std::getline(Save1, linia);
-                    switch (nr_lini)
+                    Mouse_pressed=1;
+                    window_value=6;
+                    std::vector<bool> chest;
+                    Save1.open("Save1");
+                    std::string linia ;
+                    int nr_lini=1;
+                    for(int i = 0; i<6; i++)
                     {
-                    case 1: Spawn.x = ::atof(linia.c_str()); break;
-                    case 2: Spawn.y = ::atof(linia.c_str()); break;
-                    //case 3: scale_factor = atoi(linia.c_str()); break; atof(linia.c_str());
+                        std::getline(Save1, linia);
+                        switch (nr_lini)
+                        {
+                        case 1: Spawn.x = ::atof(linia.c_str()); break;
+                        case 2: Spawn.y = ::atof(linia.c_str()); break;
+                        case 3:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 4:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 5:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        }
+                        nr_lini++;
                     }
-                    nr_lini++;
-                }
-                p1.getPosition(number_of_saves, Spawn);
-                Save1.close();
-                p7.is_this_fresh_file(0);
-
-                window_value=6;
+                    Save1.close();
+                    p1.getPosition(number_of_saves, Spawn);
+                    p7.is_this_fresh_file(0, chest);
+                    p6.file_exist(chest);
+                    chest.clear();
                 }
             }
             //Loading Saves
@@ -456,15 +498,21 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=6;
-                if_file_exist[0]=1;
-                number_of_saves++;
-                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
-                Save1.open("Save1", std::ios::out );
-                Save1.close();
-                Current_Save=1;
-                p7.is_this_fresh_file(1);
+                    Mouse_pressed=1;
+                    window_value=6;
+                    Current_Save=1;
+                    number_of_saves++;
+                    Save1.open("Save1", std::ios::out );
+                    Save1.close();
+                    std::vector<bool> chest;
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                    if_file_exist[0]=1;
+                    p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                    p7.is_this_fresh_file(1, chest);
+                    chest.clear();
                 }
             }
             if(mouse_pos.x>= Empty2.getGlobalBounds().left &&
@@ -475,15 +523,21 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=6;
-                if_file_exist[1]=1;
-                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
-                number_of_saves++;
-                Save2.open("Save2", std::ios::out );
-                Save2.close();
-                Current_Save=2;
-                p7.is_this_fresh_file(1);
+                    Mouse_pressed=1;
+                    window_value=6;
+                    Current_Save=2;
+                    number_of_saves++;
+                    Save2.open("Save2", std::ios::out );
+                    Save2.close();
+                    std::vector<bool> chest;
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                    if_file_exist[1]=1;
+                    p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                    p7.is_this_fresh_file(1, chest);
+                    chest.clear();
                 }
             }
             if(mouse_pos.x>= Empty3.getGlobalBounds().left &&
@@ -494,15 +548,21 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=6;
-                if_file_exist[2]=1;
-                p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
-                number_of_saves++;
-                Save3.open("Save3", std::ios::out );
-                Save3.close();
-                Current_Save=3;
-                p7.is_this_fresh_file(1);
+                    Mouse_pressed=1;
+                    Current_Save=3;
+                    window_value=6;
+                    number_of_saves++;
+                    Save3.open("Save3", std::ios::out );
+                    Save3.close();
+                    std::vector<bool> chest;
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                        chest.push_back(0);
+                    if_file_exist[2]=1;
+                    p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
+                    p7.is_this_fresh_file(1, chest);
+                    chest.clear();
                 }
             }
 
@@ -514,27 +574,64 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                Current_Save=1;
-                Save1.open("Save1", std::ios::in);
-                std::string linia ;
-                int nr_lini=1;
-                for(int i = 0; i<2; i++)
-                {
-                    std::getline(Save1, linia);
-                    switch (nr_lini)
+                    Mouse_pressed=1;
+                    window_value=6;
+                    Current_Save=1;
+                    std::vector<bool> chest;
+                    Save1.open("Save1", std::ios::in);
+                    std::string linia ;
+                    int nr_lini=1;
+                    for(int i = 0; i<6; i++)
                     {
-                    case 1: Spawn.x = ::atof(linia.c_str()); break;
-                    case 2: Spawn.y = ::atof(linia.c_str()); break;
-                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                        std::getline(Save1, linia);
+                        switch (nr_lini)
+                        {
+                        case 1: Spawn.x = ::atof(linia.c_str()); break;
+                        case 2: Spawn.y = ::atof(linia.c_str()); break;
+                        case 3:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 4:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 5:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        }
+                        nr_lini++;
                     }
-                    nr_lini++;
-                }
-                p1.getPosition(number_of_saves, Spawn);
-                Save1.close();
-                p7.is_this_fresh_file(0);
+                    p7.is_this_fresh_file(0, chest);
+                    p1.getPosition(number_of_saves, Spawn);
+                    p6.file_exist(chest);
+                    Save1.close();
+                    chest.clear();
 
-                window_value=6;
+
+
+
 
 
                 }
@@ -547,27 +644,63 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1; 
-                Current_Save=2;
-                Save2.open("Save2", std::ios::in);
-                std::string linia ;
-                int nr_lini=1;
-                for(int i = 0; i<2; i++)
-                {
-                    std::getline(Save2, linia);
-                    switch (nr_lini)
+                    Mouse_pressed=1;
+                    window_value=6;
+                    Current_Save=2;
+                    std::vector<bool> chest;
+                    Save2.open("Save2", std::ios::in);
+                    std::string linia ;
+                    int nr_lini=1;
+                    for(int i = 0; i<6; i++)
                     {
-                    case 1: Spawn.x = ::atof(linia.c_str()); break;
-                    case 2: Spawn.y = ::atof(linia.c_str()); break;
-                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                        std::getline(Save2, linia);
+                        switch (nr_lini)
+                        {
+                        case 1: Spawn.x = ::atof(linia.c_str()); break;
+                        case 2: Spawn.y = ::atof(linia.c_str()); break;
+                        case 3:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 4:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 5:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        }
+                        nr_lini++;
                     }
-                    nr_lini++;
-                }
-                p1.getPosition(number_of_saves, Spawn);
-                Save2.close();
-                p7.is_this_fresh_file(0);
+                    p7.is_this_fresh_file(0, chest);
+                    p1.getPosition(number_of_saves, Spawn);
+                    p6.file_exist(chest);
+                    Save2.close();
 
-                window_value=6;
+                    chest.clear();
+
+
 
 
                 }
@@ -580,29 +713,61 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                Current_Save=3;
-                Save3.open("Save3", std::ios::in);
-                std::string linia ;
-                int nr_lini=1;
-                for(int i = 0; i<2; i++)
-                {
-                    std::getline(Save3, linia);
-                    switch (nr_lini)
+                    Mouse_pressed=1;
+                    Current_Save=3;
+                    window_value=6;
+                    std::vector<bool> chest;
+
+                    Save3.open("Save3", std::ios::in);
+                    std::string linia ;
+                    int nr_lini=1;
+                    for(int i = 0; i<6; i++)
                     {
-                    case 1: Spawn.x = ::atof(linia.c_str()); break;
-                    case 2: Spawn.y = ::atof(linia.c_str()); break;
-                    //case 3: scale_factor = atoi(linia.c_str()); break;
+                        std::getline(Save3, linia);
+                        switch (nr_lini)
+                        {
+                        case 1: Spawn.x = ::atof(linia.c_str()); break;
+                        case 2: Spawn.y = ::atof(linia.c_str()); break;
+                        case 3:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 4:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 5:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        }
+                        nr_lini++;
                     }
-                    nr_lini++;
-                }
-                p1.getPosition(number_of_saves, Spawn);
-                Save3.close();
-                p7.is_this_fresh_file(0);
-
-                window_value=6;
-
-
+                    p7.is_this_fresh_file(0, chest);
+                    p1.getPosition(number_of_saves, Spawn);
+                    p6.file_exist(chest);
+                    Save3.close();
+                    chest.clear();
                 }
             }
             //Settings
@@ -614,8 +779,8 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=3;
+                    Mouse_pressed=1;
+                    window_value=3;
                 }
             }
             //Exit Game
@@ -627,8 +792,7 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-
-                return 0;
+                    return 0;
                 }
             }
 
@@ -640,8 +804,8 @@ window.setView(view);
             {
                 if(!Mouse_pressed)
                 {
-                Mouse_pressed=1;
-                window_value=4;
+                    Mouse_pressed=1;
+                    window_value=4;
                 }
             }
             else if(mouse_pos.x>= Toggle1.getGlobalBounds().left &&
@@ -703,21 +867,27 @@ window.setView(view);
                     {
                     if(Current_Save==1)
                     {
-                         Save1.open("Save1", std::ios::out);
-                        Saving(Save1, p1.Position());
+                        Save1.open("Save1", std::ios::out);
+                        Saving(Save1, p1.Position(), p7.is_chest_open());
                         Save1.close();
+                        p7.reset();
+                        p6.reset();
                     }
                     if(Current_Save==2)
                     {
-                         Save2.open("Save2", std::ios::out);
-                        Saving(Save2, p1.Position());
+                        Save2.open("Save2", std::ios::out);
+                        Saving(Save2, p1.Position(), p7.is_chest_open());
                         Save2.close();
+                        p7.reset();
+                        p6.reset();
                     }
                     if(Current_Save==3)
                     {
                         Save3.open("Save3", std::ios::out);
-                        Saving(Save3, p1.Position());
+                        Saving(Save3, p1.Position(), p7.is_chest_open());
                         Save3.close();
+                        p7.reset();
+                        p6.reset();
 
                     }
 
@@ -753,7 +923,6 @@ window.setView(view);
                 window_value=4;
                 screen_width = 720;
                 screen_height = 405;
-                 //scale_factor=0.375;
                 }
             }
             else if(mouse_pos.x>= r1280.getGlobalBounds().left &&
@@ -768,7 +937,6 @@ window.setView(view);
                 window_value=4;
                 screen_width = 1280;
                 screen_height = 720;
-                //scale_factor=0.66666666666666666666666666666667;
                 }
             }
             else if(mouse_pos.x>= r1920.getGlobalBounds().left &&
@@ -783,7 +951,6 @@ window.setView(view);
                 window_value=4;
                 screen_width = 1920;
                 screen_height = 1080;
-                //scale_factor=1;
                 }
             }
             else if(mouse_pos.x>= r2560 .getGlobalBounds().left &&
@@ -798,7 +965,6 @@ window.setView(view);
                 window_value=4;
                 screen_width = 2560;
                 screen_height = 1440 ;
-                //scale_factor=1.3333;
                 }
             }
 
@@ -807,18 +973,20 @@ window.setView(view);
 
 
 
-        if(window_value==6)
-        {
+    if(window_value==6)
+    {
 
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                window_value=7;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window_value=7;
         }
-        }
+
+    }
 
         if(Toggle1_option)
             Toggle1.setTextureRect(Toggle_Position[0]);
         else
             Toggle1.setTextureRect(Toggle_Position[1]);
+
         if(Toggle2_option)
             Toggle2.setTextureRect(Toggle_Position[2]);
         else
@@ -827,36 +995,24 @@ window.setView(view);
 
 
         Time+=Time+Second;
-        //p1.Movement(Second, window_value);
         p6.Sound_movement(window_value, p7.is_chest_open());
-        p1.Movement_Again(Second, window_value,1,1,1); //p7.abilities()[0], p7.abilities()[1], p7.abilities()[2]
-//        auto r=p7.abilities();
-//        r[0];
-//        r[1];
-//        r[2];
+        p1.Movement(Second, window_value,p7.is_chest_open());
 
-        p1.Collisions(Second, window_value);
+        p1.Collisions(window_value);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
         p7.placement(p1.Player_bounds());
-        p7.key_animation(Second, p1.camera_position(Second, window_value, view.getCenter().y));
-
-
-
-
-
+        p7.key_animation(Second, p1.camera_position(window_value, view.getCenter().y));
 
         window.clear(sf::Color::Black);
 
-
-
-        if(window_value==1) //menu screen
+        if(window_value==1)             //menu screen
         {
             window.draw(Background);
             window.draw(Start);
             window.draw(Settings);
             window.draw(Exit_Game);
         }
-        else if (window_value==2)
+        else if (window_value==2)       //Load menu
         {
             window.draw(Background);
             if(number_of_saves==0)
@@ -869,19 +1025,17 @@ window.setView(view);
                 window.draw(Continue_Game);
             }
 
-
-
             window.draw(Load);
             window.draw(Exit);
         }
-        else if (window_value==3)       //pause screen
+        else if (window_value==3)       //Settings menu
         {
             window.draw(Background);
             window.draw(Audio);
             window.draw(Graphics);
             window.draw(Exit);
         }
-        else if (window_value==4)
+        else if (window_value==4)       //Graphics menu
         {
             window.draw(Background);
             window.draw(Window_Resize);
@@ -890,7 +1044,7 @@ window.setView(view);
             window.draw(Exit);
 
         }
-        else if (window_value==5)
+        else if (window_value==5)       //Resize menu
         {
             window.draw(Background);
             window.draw(r720);
@@ -914,46 +1068,43 @@ window.setView(view);
             window.draw(p4);
 
         }
-        else if (window_value==7)
+        else if (window_value==7)       //Pause menu
         {
 
            window.draw(Background);
-
+        //add resume and menu
            window.draw(Exit);
         }
-        //Load menu
-        else if (window_value==8)
+        else if (window_value==8)       //file choose menu
         {
 
-           window.draw(Background);
-           if(if_file_exist[0])
-            window.draw(Save_1);
-           else
-              window.draw(Empty1);
+            window.draw(Background);
 
-           if(if_file_exist[1])
-            window.draw(Save_2);
+            if(if_file_exist[0])
+                window.draw(Save_1);
+            else
+                window.draw(Empty1);
 
-           else
-              window.draw(Empty2);
+            if(if_file_exist[1])
+                window.draw(Save_2);
 
-           if(if_file_exist[2])
-            window.draw(Save_3);
+            else
+                window.draw(Empty2);
 
-           else
-              window.draw(Empty3);
+            if(if_file_exist[2])
+                window.draw(Save_3);
 
+            else
+                window.draw(Empty3);
 
-
-           window.draw(Exit);
+            window.draw(Exit);
         }
+
         if (window_value!=6)
         {
            ambient_playing=0;
           music.pause();
         }
-
-
 
         window.display();
     }

@@ -150,7 +150,7 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
             second_jump_Time=0;
             isJumping=1;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.35 && abilities[1])
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.4 && abilities[1])
         {
             velocity.y =jump_speed;
 
@@ -200,6 +200,7 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
         {
             Falling=1;
         }
+        std::cout<<Player_Box[0].getPosition().x<<"   "<<Player_Box[0].getPosition().y<<std::endl;
         Player_Box[0].move(velocity*Second);
     }
 
@@ -499,7 +500,6 @@ void Player_Animation::dash_bar_animation(float Position, float Second)
 
         if(dash_bar.getGlobalBounds().left>0)
         {
-            std::cout<<"bar_active<<"   "<<bar_speed.x<<"   "<<dash_bar.getGlobalBounds().left"<<std::endl;
             bar_active=0;
         }
         else
@@ -528,14 +528,6 @@ void Player_Animation::dash_bar_animation(float Position, float Second)
 
 
     }
-
-
-
-    std::cout<<bar_active<<"   "<<bar_speed.x<<"   "<<dash_bar.getGlobalBounds().left<<std::endl;
-
-
-
-
 
 }
 //###########################################################################################################
@@ -686,7 +678,7 @@ void Player_Sounds::Sound_movement(int window_value, std::vector<bool> bruh)
      {
          Sound_jump.play();
      }
-     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.3 && bruh[1])
+     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && isJumping==1 && double_Jump==0 && second_jump_Time>0.39 && bruh[1])
      {
          Sound_Double_jump.play();
      }

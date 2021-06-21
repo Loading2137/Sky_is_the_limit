@@ -7,18 +7,21 @@
 #include <string>
 #include <fstream>
 
+Level_Platforms l1;
 
 double scale_factor;
 bool chest1_open=0;
 bool chest2_open=0;
 bool chest3_open=0;
 bool chest4_open=0;
+bool chest5_open=0;
 
 
 bool chest1_open_lastframe=0;
 bool chest2_open_lastframe=0;
 bool chest3_open_lastframe=0;
 bool chest4_open_lastframe=0;
+bool chest5_open_lastframe=0;
 
 bool window_open=0;
 
@@ -74,14 +77,15 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(Texture_Box[1],states);
     target.draw(Texture_Box[2],states);
     target.draw(Texture_Box[3],states);
+    target.draw(Texture_Box[4],states);
     if(fresh_file)
     {
         if(Tutorial_part==1)
         {
 
             target.draw(Pop_up_window,states);
-            target.draw(Texture_Box[7],states);
-            target.draw(Texture_Box[9],states);
+            target.draw(Texture_Box[8],states);
+            target.draw(Texture_Box[10],states);
             target.draw(Tutorial1_1,states);
             target.draw(Tutorial1_2,states);
             target.draw(Tutorial1_3,states);
@@ -91,7 +95,7 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
         if(Tutorial_part==2)
         {
             target.draw(Pop_up_window,states);
-            target.draw(Texture_Box[5],states);
+            target.draw(Texture_Box[6],states);
             target.draw(Tutorial1_1,states);
             target.draw(Tutorial1_2,states);
             target.draw(Tutorial1_3,states);
@@ -101,102 +105,119 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
         }
 
-        if(chest1_open && !chest1_open_lastframe)
-        {
-            if(!window_open)
-            {
-            Tutorial_part=4;
-            window_open=1;
-            }
-        }
-        if(chest2_open && !chest2_open_lastframe )
-        {
-            if(!window_open)
-            {
-            Tutorial_part=6;
-            window_open=1;
-            }
-        }
-        if(chest3_open && !chest3_open_lastframe)
-        {
-            if(!window_open)
-            {
-            Tutorial_part=8;
-            window_open=1;
-            }
-        }
-        if(chest4_open && !chest4_open_lastframe)
-        {
-            if(!window_open)
-            {
-            Tutorial_part=10;
-            window_open=1;
-            }
-        }
-        if(Tutorial_part==4)
-        {
-           target.draw(Pop_up_window,states);
-           target.draw(Tutorial1_1,states);
-           target.draw(Tutorial1_2,states);
-           target.draw(Tutorial1_4,states);
 
-        }
-        if(Tutorial_part==6)
+    }
+    if(chest1_open && !chest1_open_lastframe)
+    {
+        if(!window_open)
         {
-           target.draw(Pop_up_window,states);
-           target.draw(Tutorial1_1,states);
-           target.draw(Tutorial1_2,states);
-           target.draw(Tutorial1_3,states);
-           target.draw(Tutorial1_4,states);
-
-
-
+        Tutorial_part=4;
+        window_open=1;
         }
-        if(Tutorial_part==8)
+    }
+    if(chest2_open && !chest2_open_lastframe )
+    {
+        if(!window_open)
         {
-           target.draw(Pop_up_window,states);
-           target.draw(Tutorial1_1,states);
-           target.draw(Tutorial1_2,states);
-           target.draw(Tutorial1_4,states);
-           target.draw(Texture_Box[11],states);
-
-
+        Tutorial_part=6;
+        window_open=1;
         }
-        if(Tutorial_part==10)
+    }
+    if(chest3_open && !chest3_open_lastframe)
+    {
+        if(!window_open)
         {
-           target.draw(Pop_up_window,states);
-           target.draw(Tutorial1_1,states);
-           target.draw(Tutorial1_2,states);
-           target.draw(Tutorial1_4,states);
-           target.draw(Texture_Box[10],states);
-
-
+        Tutorial_part=8;
+        window_open=1;
         }
-
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && window_open)
+    }
+    if(chest4_open && !chest4_open_lastframe)
+    {
+        if(!window_open)
         {
-            if(!already_preesed)
-            {
-            Tutorial_part++;
-             window_open=0;
-            already_preesed=1;
-            }
+        Tutorial_part=10;
+        window_open=1;
         }
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::M) )
+    }
+    if(chest5_open && !chest5_open_lastframe)
+    {
+        if(!window_open)
         {
-            if(!already_preesed)
-            {
-            Tutorial_part=20;
-            window_open=0;
-            already_preesed=1;
-            }
+        Tutorial_part=12;
+        window_open=1;
         }
-        else
-            already_preesed=0;
-//        std::cout<<Tutorial_part<<std::endl;
+    }
+    if(Tutorial_part==4)
+    {
+       target.draw(Pop_up_window,states);
+       target.draw(Tutorial1_1,states);
+       target.draw(Tutorial1_2,states);
+       target.draw(Tutorial1_4,states);
+
+    }
+    if(Tutorial_part==6)
+    {
+       target.draw(Pop_up_window,states);
+       target.draw(Tutorial1_1,states);
+       target.draw(Tutorial1_2,states);
+       target.draw(Tutorial1_3,states);
+       target.draw(Tutorial1_4,states);
+
 
 
     }
+    if(Tutorial_part==8)
+    {
+       target.draw(Pop_up_window,states);
+       target.draw(Tutorial1_1,states);
+       target.draw(Tutorial1_2,states);
+       target.draw(Tutorial1_4,states);
+       target.draw(Texture_Box[12],states);
+
+
+    }
+    if(Tutorial_part==10)
+    {
+       target.draw(Pop_up_window,states);
+       target.draw(Tutorial1_1,states);
+       target.draw(Tutorial1_2,states);
+       target.draw(Tutorial1_4,states);
+       target.draw(Texture_Box[11],states);
+
+
+    }
+    if(Tutorial_part==12)
+    {
+       target.draw(Pop_up_window,states);
+       target.draw(Tutorial1_1,states);
+       target.draw(Tutorial1_2,states);
+       target.draw(Tutorial1_3,states);
+       target.draw(Tutorial1_4,states);
+
+
+
+    }
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && window_open)
+    {
+        if(!already_preesed)
+        {
+        Tutorial_part++;
+         window_open=0;
+        already_preesed=1;
+        }
+    }
+    else if(sf::Keyboard::isKeyPressed(sf::Keyboard::M) )
+    {
+        if(!already_preesed)
+        {
+        Tutorial_part=20;
+        window_open=0;
+        already_preesed=1;
+        }
+    }
+    else
+        already_preesed=0;
 
 
 }
@@ -289,14 +310,14 @@ Map_Texture::Map_Texture()
     map.close();
 
 
-    Texture_Box.push_back(Door);    //4
-    Texture_Box.push_back(E);       //5
-    Texture_Box.push_back(R);       //6
-    Texture_Box.push_back(A);       //7
-    Texture_Box.push_back(S);       //8
-    Texture_Box.push_back(D);       //9
-    Texture_Box.push_back(F);       //10
-    Texture_Box.push_back(C);       //11
+    Texture_Box.push_back(Door);    //5
+    Texture_Box.push_back(E);       //6
+    Texture_Box.push_back(R);       //7
+    Texture_Box.push_back(A);       //8
+    Texture_Box.push_back(S);       //9
+    Texture_Box.push_back(D);       //10
+    Texture_Box.push_back(F);       //11
+    Texture_Box.push_back(C);       //12
 
 
 
@@ -348,6 +369,13 @@ void Map_Texture::key_animation(float Second, float camera)
         Tutorial1_2.setString("To hold onto wall press and hold: ");
 
     }
+    if(Tutorial_part==12)
+    {
+        Tutorial1_1.setString("Thank You Mario");
+        Tutorial1_2.setString("But princess is in another castle...? ");
+        Tutorial1_3.setString("Wait, wrong game.");
+
+    }
 
 
     Tutorial1_1.setPosition(250,camera-470.f);
@@ -356,20 +384,20 @@ void Map_Texture::key_animation(float Second, float camera)
     Tutorial1_4.setPosition(1100,camera-65.f);
     Pop_up_window.setPosition(140.f, camera-540.f);
 
-    Texture_Box[7].setPosition(950.f,camera-350.f);
-    Texture_Box[7].setTextureRect(amimation_frame);
+    Texture_Box[8].setPosition(950.f,camera-350.f);
+    Texture_Box[8].setTextureRect(amimation_frame);
 
-    Texture_Box[9].setPosition(950.f,camera-200.f);
-    Texture_Box[9].setTextureRect(amimation_frame);
-
-    Texture_Box[5].setPosition(950.f,camera-350.f);
-    Texture_Box[5].setTextureRect(amimation_frame);
-
-    Texture_Box[11].setPosition(800.f,camera-350.f);
-    Texture_Box[11].setTextureRect(amimation_frame);
-
-    Texture_Box[10].setPosition(1150.f,camera-350.f);
+    Texture_Box[10].setPosition(950.f,camera-200.f);
     Texture_Box[10].setTextureRect(amimation_frame);
+
+    Texture_Box[6].setPosition(950.f,camera-350.f);
+    Texture_Box[6].setTextureRect(amimation_frame);
+
+    Texture_Box[12].setPosition(800.f,camera-350.f);
+    Texture_Box[12].setTextureRect(amimation_frame);
+
+    Texture_Box[11].setPosition(1150.f,camera-350.f);
+    Texture_Box[11].setTextureRect(amimation_frame);
 
 
 }
@@ -381,6 +409,7 @@ void Map_Texture::placement(sf::FloatRect Player_Bounds)
     chest2_open_lastframe=chest2_open;
     chest3_open_lastframe=chest3_open;
     chest4_open_lastframe=chest4_open;
+    chest5_open_lastframe=chest5_open;
 
     if(Texture_Box[0].getGlobalBounds().intersects(Player_Bounds))
     {
@@ -413,6 +442,14 @@ void Map_Texture::placement(sf::FloatRect Player_Bounds)
         {
 
                 chest4_open=1;
+        }
+    }
+    if(Texture_Box[4].getGlobalBounds().intersects(Player_Bounds))
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+        {
+
+                chest5_open=1;
         }
     }
 
@@ -449,6 +486,14 @@ void Map_Texture::placement(sf::FloatRect Player_Bounds)
     {
         Texture_Box[3].setTextureRect(Chest_Position[0]);
     }
+    if(chest5_open)
+    {
+        Texture_Box[4].setTextureRect(Chest_Position[1]);
+    }
+    else
+    {
+        Texture_Box[4].setTextureRect(Chest_Position[0]);
+    }
 
 
 
@@ -462,6 +507,7 @@ std::vector<bool> Map_Texture::is_chest_open()
     chest_open.push_back(chest2_open);
     chest_open.push_back(chest3_open);
     chest_open.push_back(chest4_open);
+    chest_open.push_back(chest5_open);
 
     return chest_open;
     chest_open.clear();
@@ -477,6 +523,7 @@ void Map_Texture::is_this_fresh_file(bool it_is, std::vector<bool> chest)
        chest2_open=chest[1];
        chest3_open=chest[2];
        chest4_open=chest[3];
+       chest5_open=chest[4];
     }
     else
     {
@@ -487,6 +534,7 @@ void Map_Texture::is_this_fresh_file(bool it_is, std::vector<bool> chest)
         chest2_open=chest[1];
         chest3_open=chest[2];
         chest4_open=chest[3];
+        chest5_open=chest[4];
 
     }
 }
@@ -550,22 +598,39 @@ Level_Platforms::Level_Platforms()
     Floor.setTexture(&Walls_Texture);
     Floor.setTextureRect(sf::IntRect(0, 0, 30*grid_size,grid_size));
 
-    sf::RectangleShape Wall_left (sf::Vector2f(grid_size,64*grid_size));
-    Wall_left.setPosition(0,-1000.f);
+    sf::RectangleShape Wall_left (sf::Vector2f(grid_size, -(single_platform[single_platform.size()-1].getPosition().y-1080.f)));
+    Wall_left.setPosition(0.f,single_platform[single_platform.size()-1].getPosition().y);
     Wall_left.setTexture(&Walls_Texture);
-    Wall_left.setTextureRect(sf::IntRect(0, 0, grid_size,64*grid_size));
+    Wall_left.setTextureRect(sf::IntRect(0, 0, grid_size,-(single_platform[single_platform.size()-1].getPosition().y-1080.f)));
 
-    sf::RectangleShape Wall_right (sf::Vector2f(grid_size,64*grid_size));
-    Wall_right.setPosition(1860.f,-1000.f);
+    sf::RectangleShape Wall_right (sf::Vector2f(grid_size,-(single_platform[single_platform.size()-1].getPosition().y-1080.f)));
+    Wall_right.setPosition(1860.f,single_platform[single_platform.size()-1].getPosition().y);
     Wall_right.setTexture(&Walls_Texture);
-    Wall_right.setTextureRect(sf::IntRect(0, 0, grid_size,64*grid_size));
+    Wall_right.setTextureRect(sf::IntRect(0, 0, grid_size,-(single_platform[single_platform.size()-1].getPosition().y-1080.f)));
+
+
+    sf::RectangleShape left_stop (sf::Vector2f(grid_size, 2000.f));
+    left_stop.setPosition(-60,single_platform[single_platform.size()-1].getPosition().y-2000.f);
+
+    sf::RectangleShape right_stop (sf::Vector2f(grid_size,2000.f));
+    right_stop.setPosition(1920,single_platform[single_platform.size()-1].getPosition().y-2000.f);
+
+
+
 
 
     single_platform.push_back(Floor);
     single_platform.push_back(Wall_left);
     single_platform.push_back(Wall_right);
+    single_platform.push_back(left_stop);
+    single_platform.push_back(right_stop);
 
 
+}
+
+std::vector<sf::RectangleShape> Level_Platforms::Last_element()
+{
+    return single_platform;
 }
 
 std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
@@ -583,14 +648,23 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
 void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(BackGround_T, states);
+    target.draw(BackGround_T2, states);
 }
 
 BackGround::BackGround()
 {
+std::cout<<-(l1.Last_element()[l1.Last_element().size()-1].getPosition().y-1080.f)<<std::endl;
     BackGround_Texture.loadFromFile("Wall2.png");
     BackGround_Texture.setRepeated(true);
+    BackGround_Texture2.loadFromFile("bg_layer1.png");
+    BackGround_Texture2.setRepeated(true);
+
     BackGround_T.setTexture(BackGround_Texture);
-    BackGround_T.setTextureRect(sf::IntRect(0, 0, 1920, 2080));
-    BackGround_T.setPosition(0,-1000);
+    BackGround_T.setTextureRect(sf::IntRect(0, 0, 1920, l1.Last_element()[l1.Last_element().size()-1].getPosition().y-1080.f));
+    BackGround_T.setPosition(0,l1.Last_element()[l1.Last_element().size()-1].getPosition().y+360.f);
+
+    BackGround_T2.setTexture(BackGround_Texture2);
+    BackGround_T2.setTextureRect(sf::IntRect(0, 0, 1920, 2000.f));
+    BackGround_T2.setPosition(0,l1.Last_element()[l1.Last_element().size()-1].getPosition().y+360.f);
 }
 

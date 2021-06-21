@@ -12,15 +12,16 @@
 void Saving(std::fstream &Save , sf::Vector2f position, std::vector<bool> chests)
 {
 
-    //std::cout<<scale_factor<<std::endl;
 
-    Save<<position.x+2<<std::endl; //zmień na pozycje
+
+    Save<<position.x+2<<std::endl;
     Save<<position.y+2<<std::endl;
     Save<<chests[0]<<std::endl;
     Save<<chests[1]<<std::endl;
     Save<<chests[2]<<std::endl;
     Save<<chests[3]<<std::endl;
-    //Save1<<scale_factor<<std::endl;
+    Save<<chests[4]<<std::endl;
+
 
 }
 
@@ -60,8 +61,6 @@ int main()
 
     if(Save1)
     {
-        std::cout<<"number_of_saves"<<std::endl;
-
         if_file_exist.push_back(1);
         number_of_saves++;
     }
@@ -97,6 +96,8 @@ int main()
     //    value 6 - actual game
     //    value 7 - Pause menu
     //    value 8 - file choose menu
+    //    value 9 - Audio menu
+    //    value 10 - secret room
 
 
 
@@ -450,6 +451,7 @@ window.setView(view);
                         chest.push_back(0);
                         chest.push_back(0);
                         chest.push_back(0);
+                        chest.push_back(0);
                     if_file_exist[0]=1;
                     p7.is_this_fresh_file(1, chest);
                     chest.clear();
@@ -465,11 +467,12 @@ window.setView(view);
                 {
                     Mouse_pressed=1;
                     window_value=6;
+                    Current_Save=1;
                     std::vector<bool> chest;
                     Save1.open("Save1");
                     std::string linia ;
                     int nr_lini=1;
-                    for(int i = 0; i<6; i++)
+                    for(int i = 0; i<7; i++)
                     {
                         std::getline(Save1, linia);
                         switch (nr_lini)
@@ -501,6 +504,14 @@ window.setView(view);
                             }
                             break;
                         case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 7:
                             if(linia == "1"){
                                 chest.push_back(true);
                             }
@@ -551,6 +562,7 @@ window.setView(view);
                         chest.push_back(0);
                         chest.push_back(0);
                         chest.push_back(0);
+                        chest.push_back(0);
                     if_file_exist[0]=1;
                     p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
                     p7.is_this_fresh_file(1, chest);
@@ -572,6 +584,7 @@ window.setView(view);
                     Save2.open("Save2", std::ios::out );
                     Save2.close();
                     std::vector<bool> chest;
+                        chest.push_back(0);
                         chest.push_back(0);
                         chest.push_back(0);
                         chest.push_back(0);
@@ -601,6 +614,7 @@ window.setView(view);
                         chest.push_back(0);
                         chest.push_back(0);
                         chest.push_back(0);
+                        chest.push_back(0);
                     if_file_exist[2]=1;
                     p1.getPosition(number_of_saves, sf::Vector2f(1200.f,900.f));
                     p7.is_this_fresh_file(1, chest);
@@ -623,7 +637,7 @@ window.setView(view);
                     Save1.open("Save1", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
-                    for(int i = 0; i<6; i++)
+                    for(int i = 0; i<7; i++)
                     {
                         std::getline(Save1, linia);
                         switch (nr_lini)
@@ -662,6 +676,14 @@ window.setView(view);
                                 chest.push_back(false);
                             }
                             break;
+                        case 7:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
                         }
                         nr_lini++;
                     }
@@ -693,7 +715,7 @@ window.setView(view);
                     Save2.open("Save2", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
-                    for(int i = 0; i<6; i++)
+                    for(int i = 0; i<7; i++)
                     {
                         std::getline(Save2, linia);
                         switch (nr_lini)
@@ -732,6 +754,14 @@ window.setView(view);
                                 chest.push_back(false);
                             }
                             break;
+                        case 7:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
                         }
                         nr_lini++;
                     }
@@ -763,7 +793,7 @@ window.setView(view);
                     Save3.open("Save3", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
-                    for(int i = 0; i<6; i++)
+                    for(int i = 0; i<7; i++)
                     {
                         std::getline(Save3, linia);
                         switch (nr_lini)
@@ -795,6 +825,14 @@ window.setView(view);
                             }
                             break;
                         case 6:
+                            if(linia == "1"){
+                                chest.push_back(true);
+                            }
+                            else{
+                                chest.push_back(false);
+                            }
+                            break;
+                        case 7:
                             if(linia == "1"){
                                 chest.push_back(true);
                             }

@@ -80,6 +80,7 @@ public:
     Level_Platforms();
     std::vector<sf::FloatRect> PlatformBounds();
     void scale(int scale_factor);
+    std::vector<sf::RectangleShape> Last_element();
 
 };
 
@@ -87,8 +88,10 @@ public:
 class BackGround :public sf::Drawable
 {
     sf::Sprite BackGround_T;
+    sf::Sprite BackGround_T2;
 public:
     sf::Texture BackGround_Texture;
+    sf::Texture BackGround_Texture2;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     BackGround();
 

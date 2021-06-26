@@ -50,6 +50,7 @@ public:
     void dash_bar_animation(float Position, float Second);
     int Dash();
     int Current_frame=0;
+
     int CurrentDash_frame=0;
     sf::IntRect getCurrentRect(int Current_frame);
 
@@ -97,3 +98,5 @@ public:
 };
 
 //###########################################################################################################
+
+

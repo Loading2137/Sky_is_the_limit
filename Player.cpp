@@ -176,31 +176,35 @@ void Player::Movement(float Second, int window_value, std::vector<bool> abilitie
             wall_grab=0;
         }
 
-
+        if(velocity.y>3000.f){
+            velocity.y=3000.f;
+        }
+        else{
             velocity.y += gravity_const;
+        }
 
-            if(dash_active)
+
+        if(dash_active)
+        {
+            if(left)
             {
-                if(left)
-                {
-                    velocity.x += 22;
-                    if(velocity.x>0)
-                        dash_active=0;
-                }
-                else
-                {
-                    velocity.x -= 22;
-                    if(velocity.x<0)
-                        dash_active=0;
-                }
-
+                velocity.x += 22;
+                if(velocity.x>0)
+                    dash_active=0;
             }
+            else
+            {
+                velocity.x -= 22;
+                if(velocity.x<0)
+                    dash_active=0;
+            }
+
+        }
 
         if (velocity.y>20.f )
         {
             Falling=1;
         }
-        std::cout<<Player_Box[0].getPosition().x<<"   "<<Player_Box[0].getPosition().y<<std::endl;
         Player_Box[0].move(velocity*Second);
     }
 

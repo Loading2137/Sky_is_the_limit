@@ -375,6 +375,7 @@ int main()
     BackGround p5;
     Player_Sounds p6;
     Map_Texture p7;
+    Glados p8;
 
 
 
@@ -1152,9 +1153,12 @@ window.setView(view);
 
         p1.Collisions(window_value);
         p4.Movement_T(p1.Position(), Second); // player tracking for texture
-        p7.placement(p1.Player_bounds());
-        p7.key_animation(Second, p1.camera_position(window_value, view.getCenter().y));
+        p7.Chest_state(p1.Player_bounds());
+        p7.Map_animation(Second, p1.camera_position(window_value, view.getCenter().y));
         p3.dash_bar_animation(view.getCenter().y, Second);
+
+        if(p7.Dor(p1.Player_bounds())==10)
+            window_value=10;
 
         window.clear(sf::Color::Black);
 
@@ -1221,9 +1225,12 @@ window.setView(view);
             window.draw(p5);
             window.draw(p2);
 
-            window.draw(p4);
+
             window.draw(p3);
             window.draw(p7);
+            window.draw(p4);
+
+
 
         }
         else if (window_value==7)       //Pause menu
@@ -1267,6 +1274,42 @@ window.setView(view);
 
 
             window.draw(Back);
+        }
+        else if (window_value==10)
+        {
+            p8.Timer(Second);
+            p8.Glados_animation(Second);
+            window.draw(p8);
+            if(p8.End()>8.f)
+            {
+
+                  std::cout<<p8.End()<<std::endl;
+
+                if(Current_Save==1)
+                {
+                    Save1.open("Save1", std::ios::out);
+                    Saving(Save1, p1.Position(), p7.is_chest_open());
+                    Save1.close();
+
+                }
+                if(Current_Save==2)
+                {
+                    Save2.open("Save2", std::ios::out);
+                    Saving(Save2, p1.Position(), p7.is_chest_open());
+                    Save2.close();
+
+                }
+                if(Current_Save==3)
+                {
+                    Save3.open("Save3", std::ios::out);
+                    Saving(Save3, p1.Position(), p7.is_chest_open());
+                    Save3.close();
+
+
+                }
+                return 0;
+            }
+
         }
 
         if (window_value!=6)

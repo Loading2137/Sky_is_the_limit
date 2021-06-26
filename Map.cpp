@@ -31,6 +31,10 @@ bool already_preesed=0;
 
 //###########################################################################################################
 float Time_k=0;
+float Time_l=0;
+float Time_G=0;
+float Time_p=0;
+
 
 Tutorial::Tutorial()
 {
@@ -38,14 +42,23 @@ Tutorial::Tutorial()
     keyAnimation.push_back(sf::IntRect(11, 10, 125, 150));
     keyAnimation.push_back(sf::IntRect(141, 10, 125, 150));
     keyAnimation.push_back(sf::IntRect(270, 10, 125, 150));
-}
-sf::IntRect Tutorial::getCurrentRect(int Current_frame)
-{
 
-        return keyAnimation[Current_frame];
+    Fire_frames.push_back(sf::IntRect(0,0,230,250));
+    Fire_frames.push_back(sf::IntRect(231,0,230,250));
+    Fire_frames.push_back(sf::IntRect(462,0,230,250));
+    Fire_frames.push_back(sf::IntRect(693,0,230,250));
+    Fire_frames.push_back(sf::IntRect(924,0,230,250));
+    Fire_frames.push_back(sf::IntRect(1155,0,230,250));
+    Fire_frames.push_back(sf::IntRect(1386,0,230,250));
+    Fire_frames.push_back(sf::IntRect(1617,0,230,250));
+    Fire_frames.push_back(sf::IntRect(1848,0,230,250));
+    Fire_frames.push_back(sf::IntRect(2079,0,230,250));
+    Fire_frames.push_back(sf::IntRect(2310,0,230,250));
+
 
 }
-int Tutorial ::step(float Second, double animation_fps)
+
+sf::IntRect Tutorial ::step(float Second, double animation_fps, int frame_number)
 {
         float time_between_frames=1.f/animation_fps;
 
@@ -57,15 +70,35 @@ int Tutorial ::step(float Second, double animation_fps)
         {
             Current_frame++;
             Time_k= Time_k- time_between_frames;
-            if(Current_frame ==3)
+            if(Current_frame ==frame_number)
             {
                 Current_frame=0;
             }
         }
 
-        return Current_frame;
+        return keyAnimation[Current_frame];
 }
 
+sf::IntRect Tutorial ::step_fire(float Second, double animation_fps, int frame_number)
+{
+        float time_between_frames=1.f/animation_fps;
+
+
+        Time_l = Time_l + Second;
+
+
+        if(Time_l>time_between_frames)
+        {
+            Current_fire_frame++;
+            Time_l= Time_l- time_between_frames;
+            if(Current_fire_frame ==frame_number)
+            {
+                Current_fire_frame=0;
+            }
+        }
+
+        return Fire_frames[Current_fire_frame];
+}
 
 
 //###########################################################################################################
@@ -78,6 +111,8 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(Texture_Box[2],states);
     target.draw(Texture_Box[3],states);
     target.draw(Texture_Box[4],states);
+    target.draw(Texture_Box[13],states);
+    target.draw(Texture_Box[5],states);
     if(fresh_file)
     {
         if(Tutorial_part==1)
@@ -258,6 +293,8 @@ Map_Texture::Map_Texture()
     D_Texture.loadFromFile("D.png");
     F_Texture.loadFromFile("F.png");
     C_Texture.loadFromFile("C.png");
+    fire_texture.loadFromFile("fire.png");
+
 
 
     Chest.setTexture(Chest_Texture);
@@ -270,6 +307,7 @@ Map_Texture::Map_Texture()
     D.setTexture(D_Texture);
     F.setTexture(F_Texture);
     C.setTexture(C_Texture);
+    fireplace.setTexture(fire_texture);
 
 
 
@@ -318,15 +356,24 @@ Map_Texture::Map_Texture()
     Texture_Box.push_back(D);       //10
     Texture_Box.push_back(F);       //11
     Texture_Box.push_back(C);       //12
+    Texture_Box.push_back(fireplace);//13
+
+    Texture_Box[5].setPosition(1715.f,-11218.f); //Door placement
+    Texture_Box[5].setScale(0.35,0.35);
+
+
+
 
 
 
 }
 
-void Map_Texture::key_animation(float Second, float camera)
+void Map_Texture::Map_animation(float Second, float camera)
 {
+    sf::IntRect fire_animation_frame=animation.step_fire(Second, 7, 11);
+    sf::IntRect key_amimation_frame =animation.step(Second, 3, 3);
 
-    sf::IntRect amimation_frame =animation.getCurrentRect(animation.step(Second, 3));
+
 
     Tutorial1_4.setString("Press ENTER to continue or M to skip all tutorials");
     if(Tutorial_part==1)
@@ -385,24 +432,42 @@ void Map_Texture::key_animation(float Second, float camera)
     Pop_up_window.setPosition(140.f, camera-540.f);
 
     Texture_Box[8].setPosition(950.f,camera-350.f);
-    Texture_Box[8].setTextureRect(amimation_frame);
+    Texture_Box[8].setTextureRect(key_amimation_frame);
 
     Texture_Box[10].setPosition(950.f,camera-200.f);
-    Texture_Box[10].setTextureRect(amimation_frame);
+    Texture_Box[10].setTextureRect(key_amimation_frame);
 
     Texture_Box[6].setPosition(950.f,camera-350.f);
-    Texture_Box[6].setTextureRect(amimation_frame);
+    Texture_Box[6].setTextureRect(key_amimation_frame);
 
     Texture_Box[12].setPosition(800.f,camera-350.f);
-    Texture_Box[12].setTextureRect(amimation_frame);
+    Texture_Box[12].setTextureRect(key_amimation_frame);
 
     Texture_Box[11].setPosition(1150.f,camera-350.f);
-    Texture_Box[11].setTextureRect(amimation_frame);
+    Texture_Box[11].setTextureRect(key_amimation_frame);
+
+    Texture_Box[13].setPosition(180.f,-13670.f);
+    Texture_Box[13].setTextureRect(fire_animation_frame);
+
+
+
+
 
 
 }
+int Map_Texture::Dor(sf::FloatRect Player_Bounds)
+{
+    if(Texture_Box[5].getGlobalBounds().intersects(Player_Bounds))
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+        {
 
-void Map_Texture::placement(sf::FloatRect Player_Bounds)
+                return 10;
+        }
+    }
+}
+
+void Map_Texture::Chest_state(sf::FloatRect Player_Bounds)
 {
 
     chest1_open_lastframe=chest1_open;
@@ -452,6 +517,7 @@ void Map_Texture::placement(sf::FloatRect Player_Bounds)
                 chest5_open=1;
         }
     }
+
 
 
     if(chest1_open)
@@ -644,7 +710,7 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
     return CakeIsALie;
 }
 
-//###########################################################################################################
+
 void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     target.draw(BackGround_T, states);
@@ -653,7 +719,7 @@ void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
 BackGround::BackGround()
 {
-std::cout<<-(l1.Last_element()[l1.Last_element().size()-1].getPosition().y-1080.f)<<std::endl;
+
     BackGround_Texture.loadFromFile("Wall2.png");
     BackGround_Texture.setRepeated(true);
     BackGround_Texture2.loadFromFile("bg_layer1.png");
@@ -668,3 +734,145 @@ std::cout<<-(l1.Last_element()[l1.Last_element().size()-1].getPosition().y-1080.
     BackGround_T2.setPosition(0,l1.Last_element()[l1.Last_element().size()-1].getPosition().y+360.f);
 }
 
+//###########################################################################################################
+void Glados::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
+    target.draw(Background, states);
+    target.draw(Glados_sprite, states);
+    target.draw(Floor_dummy, states);
+    target.draw(Cake_sprite, states);
+    target.draw(Player_dummy_sprite, states);
+    target.draw(Dark, states);
+
+
+    if(Phase_Time>7.f)
+        target.draw(Bad_ending, states);
+
+}
+
+Glados::Glados()
+{
+    GladosFrames.push_back(sf::IntRect(52,0,548,740));
+    GladosFrames.push_back(sf::IntRect(601,0,548,740));
+    GladosFrames.push_back(sf::IntRect(1150,0,548,740));
+    GladosFrames.push_back(sf::IntRect(1699,0,548,740));
+    GladosFrames.push_back(sf::IntRect(2248,0,548,740));
+    GladosFrames.push_back(sf::IntRect(2797,0,548,740));
+    GladosFrames.push_back(sf::IntRect(3346,0,548,740));
+    GladosFrames.push_back(sf::IntRect(3895,0,548,740));
+
+    Glados_Texture.loadFromFile("glados.png");
+    Glados_sprite.setTexture(Glados_Texture);
+
+    Glados_sprite.setScale(-1, 1);
+    Glados_sprite.setPosition(600.f, 0.f);
+
+
+    Cake_Texture.loadFromFile("cake_is_a_lie.png");
+    Cake_sprite.setTexture(Cake_Texture);
+    Cake_sprite.setPosition(930.f, 900.f);
+    Cake_sprite.setScale(0.5, 0.5);
+
+
+    Floor_dummy_Texture.loadFromFile("test.png");
+    Floor_dummy_Texture.setRepeated(1);
+    Floor_dummy.setSize(sf::Vector2f(1920.f,60.f));
+    Floor_dummy.setPosition(0,1020.f);
+    Floor_dummy.setTexture(&Floor_dummy_Texture);
+    Floor_dummy.setTextureRect(sf::IntRect(0, 0, 1920.f,60.f));
+
+    Background_Texture.loadFromFile("wall2.png");
+    Background_Texture.setRepeated(1);
+    Background.setPosition(0,0);
+    Background.setTexture(Background_Texture);
+    Background.setTextureRect(sf::IntRect(0, 0, 1920.f,1080.f));
+
+    Player_dummy_Texture.loadFromFile("Player-Sheet.png");
+    Player_dummy_sprite.setTexture(Player_dummy_Texture);
+    Player_dummy_sprite.setPosition(1190.f,925.f);
+    Player_dummy_sprite.setScale(-6, 6);
+
+
+    Dark.setPosition(0,0);
+    Dark.setSize(sf::Vector2f(1920.f,1080.f));
+
+
+    idleAnimation.push_back(sf::IntRect(28, 0, 8, 16));
+    idleAnimation.push_back(sf::IntRect(92, 0, 8, 16));
+    idleAnimation.push_back(sf::IntRect(156, 0, 8, 16));
+    idleAnimation.push_back(sf::IntRect(220, 0, 8, 16));
+
+    font.loadFromFile("OpenSans-Bold.ttf");
+    Bad_ending.setFont(font);
+    Bad_ending.setCharacterSize(120);
+    Bad_ending.setFillColor(sf::Color::Red);
+    Bad_ending.setString("Bad Ending");
+
+    Bad_ending.setPosition (sf::Vector2f(600.f,350.f));
+
+}
+
+void Glados::Glados_animation(float Second)
+{
+    Glados_sprite.setTextureRect(step(Second, 10, 8));
+    Player_dummy_sprite.setTextureRect(step_p(Second,5,4));
+}
+
+sf::IntRect Glados ::step(float Second, double animation_fps, int frame_number)
+{
+        float time_between_frames=1.f/animation_fps;
+
+        Time_G = Time_G + Second;
+
+
+        if(Time_G>time_between_frames)
+        {
+            Current_frame++;
+            Time_G= Time_G- time_between_frames;
+            if(Current_frame ==frame_number)
+            {
+                Current_frame=0;
+            }
+        }
+
+        return GladosFrames[Current_frame];
+}
+
+sf::IntRect Glados ::step_p(float Second, double animation_fps, int frame_number)
+{
+        float time_between_frames=1.f/animation_fps;
+
+        Time_p = Time_p + Second;
+
+
+        if(Time_p>time_between_frames)
+        {
+            Current_frame_p++;
+            Time_p= Time_p- time_between_frames;
+            if(Current_frame_p ==frame_number)
+            {
+                Current_frame_p=0;
+            }
+        }
+
+        return idleAnimation[Current_frame_p];
+}
+
+void Glados::Timer(float Second)
+{
+    Phase_Time+=Second;
+    Dark.setFillColor(Black);
+    if(Black.a>0 && Phase_Time>2.f)
+    {
+       Black.a-=1;
+    }
+
+    if(Phase_Time>7.f)
+        Black.a=255;
+
+}
+
+float Glados::End()
+{
+        return Phase_Time;
+}

@@ -28,7 +28,7 @@ bool bar_active=0;
 sf::Vector2f bar_speed= (sf::Vector2f(80.f,0));
 
 
-//Gravity
+//Constants
 //###################################
 const float jump_speed = -1200.f;
 const float movement_speed = 400.f;

@@ -397,10 +397,10 @@ window.setView(view);
 
 
         //#####################################################################################
-
+        sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         {
-        sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
 
         //#####################################################################################
         //Start Button
@@ -1155,9 +1155,6 @@ window.setView(view);
             if(!Mouse_pressed)
             {
                 window_value=9;
-
-
-
                 Mouse_pressed=1;
 
             }
@@ -1202,9 +1199,13 @@ window.setView(view);
         p7.Chest_state(p1.Player_bounds());
         p7.Map_animation(Second, p1.camera_position(window_value, view.getCenter().y));
         p3.dash_bar_animation(view.getCenter().y, Second);
+        p7.Cheat_window(mouse_pos);
+
 
         if(p7.Dor(p1.Player_bounds())==10)
+        {
             window_value=10;
+        }
 
 //#####################################################################################
 
@@ -1332,9 +1333,6 @@ window.setView(view);
             window.draw(p8);
             if(p8.End()>8.f)
             {
-
-                  std::cout<<p8.End()<<std::endl;
-
                 if(Current_Save==1)
                 {
                     Save1.open("Save1", std::ios::out);

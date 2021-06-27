@@ -79,10 +79,8 @@ class Player_Sounds     :public sf::Sound
     sf::SoundBuffer Buffer_run;
     sf::SoundBuffer Buffer_double_jump;
     sf::SoundBuffer Bruh_buffer;
-    sf::SoundBuffer yamete_buffer;
 
     sf::Sound Bruh_sound;
-    sf::Sound yamete_sound;
     sf::Sound Sound_Double_jump;
     sf::Sound Sound_jump;
     sf::Sound You_say_run;

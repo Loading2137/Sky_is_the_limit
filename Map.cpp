@@ -16,6 +16,13 @@ bool chest3_open=0;
 bool chest4_open=0;
 bool chest5_open=0;
 
+bool Toggle_flipped1=0;
+bool Toggle_flipped2=0;
+bool Toggle_flipped3=0;
+bool O_pressed=0;
+bool Cheat_window_open=0;
+
+
 
 bool chest1_open_lastframe=0;
 bool chest2_open_lastframe=0;
@@ -35,7 +42,7 @@ float Time_l=0;
 float Time_G=0;
 float Time_p=0;
 
-
+//###########################################################################################################
 Tutorial::Tutorial()
 {
 
@@ -99,7 +106,6 @@ sf::IntRect Tutorial ::step_fire(float Second, double animation_fps, int frame_n
 
         return Fire_frames[Current_fire_frame];
 }
-
 
 //###########################################################################################################
 void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
@@ -255,6 +261,15 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
         already_preesed=0;
 
 
+    if(Cheat_window_open)
+    {
+        target.draw(Toggle1,states);
+        target.draw(Toggle2,states);
+        target.draw(Toggle3,states);
+        //jeszcze tekst
+    }
+
+
 }
 
 Map_Texture::Map_Texture()
@@ -364,6 +379,27 @@ Map_Texture::Map_Texture()
 
 
 
+    Toggle_Position.push_back(sf::IntRect(0, 0, 978, 455));
+    Toggle_Position.push_back(sf::IntRect(0, 540, 978, 455));
+
+
+    Toggle_Texture.loadFromFile("img_522367.png");
+
+    Toggle1.setTexture(Toggle_Texture);
+    Toggle1.setScale(0.2,0.2);
+    Toggle1.setTextureRect(Toggle_Position[1]);
+
+
+    Toggle2.setTexture(Toggle_Texture);
+    Toggle2.setScale(0.2,0.2);
+    Toggle2.setTextureRect(Toggle_Position[1]);
+
+
+    Toggle3.setTexture(Toggle_Texture);
+    Toggle3.setScale(0.2,0.2);
+    Toggle3.setTextureRect(Toggle_Position[1]);
+
+
 
 
 }
@@ -449,12 +485,12 @@ void Map_Texture::Map_animation(float Second, float camera)
     Texture_Box[13].setPosition(180.f,-13670.f);
     Texture_Box[13].setTextureRect(fire_animation_frame);
 
-
-
-
-
+    Toggle1.setPosition(sf::Vector2f(200.0, camera-340.f));
+    Toggle2.setPosition(sf::Vector2f(200.0, camera-40.f));
+    Toggle3.setPosition(sf::Vector2f(200.0, camera+260.f));
 
 }
+
 int Map_Texture::Dor(sf::FloatRect Player_Bounds)
 {
     if(Texture_Box[5].getGlobalBounds().intersects(Player_Bounds))
@@ -464,7 +500,9 @@ int Map_Texture::Dor(sf::FloatRect Player_Bounds)
 
                 return 10;
         }
+
     }
+    return 0;
 }
 
 void Map_Texture::Chest_state(sf::FloatRect Player_Bounds)
@@ -564,6 +602,7 @@ void Map_Texture::Chest_state(sf::FloatRect Player_Bounds)
 
 
 
+
 }
 
 std::vector<bool> Map_Texture::is_chest_open()
@@ -611,8 +650,130 @@ void Map_Texture::reset()
 
 }
 
+void Map_Texture::Cheat_window(sf::Vector2f mouse_pos)
+{
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::O) )
+    {
+        Cheat_window_open=1;
+
+    }
+    else
+    {
+        Cheat_window_open=0;
+    }
+    std::cout<<Mouse_pressed<<"   "<<Cheat_window_open<<std::endl;
+
+
+
+     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+     {
+
+        if(mouse_pos.x>= Toggle1.getGlobalBounds().left &&
+                mouse_pos.x<= Toggle1.getGlobalBounds().left+Toggle1.getGlobalBounds().width &&
+                mouse_pos.y>= Toggle1.getGlobalBounds().top &&
+                mouse_pos.y<= Toggle1.getGlobalBounds().top+Toggle1.getGlobalBounds().height
+                && Cheat_window_open)
+        {
+            if(!Mouse_pressed)
+            {
+                if(Toggle_flipped1)
+                {
+                    Toggle_flipped1=0;
+                    Mouse_pressed=1;
+                    chest2_open=0;
+                }
+            }
+            if(!Mouse_pressed)
+            {
+                if (!Toggle_flipped1)
+                {
+                    Toggle_flipped1=1;
+                    Mouse_pressed=1;
+                    chest2_open=1;
+                }
+            }
+
+
+        }
+        else if(mouse_pos.x>= Toggle2.getGlobalBounds().left &&
+                mouse_pos.x<= Toggle2.getGlobalBounds().left+Toggle2.getGlobalBounds().width &&
+                mouse_pos.y>= Toggle2.getGlobalBounds().top &&
+                mouse_pos.y<= Toggle2.getGlobalBounds().top+Toggle2.getGlobalBounds().height
+                && Cheat_window_open)
+        {
+            if(!Mouse_pressed)
+            {
+                if(Toggle_flipped2)
+                {
+                    Toggle_flipped2=0;
+                    Mouse_pressed=1;
+                    chest3_open=0;
+                }
+            }
+            if(!Mouse_pressed)
+            {
+                if (!Toggle_flipped2)
+                {
+                    Toggle_flipped2=1;
+                    Mouse_pressed=1;
+                    chest3_open=1;
+                }
+            }
+        }
+        else if(mouse_pos.x>= Toggle3.getGlobalBounds().left &&
+                mouse_pos.x<= Toggle3.getGlobalBounds().left+Toggle3.getGlobalBounds().width &&
+                mouse_pos.y>= Toggle3.getGlobalBounds().top &&
+                mouse_pos.y<= Toggle3.getGlobalBounds().top+Toggle3.getGlobalBounds().height
+                && Cheat_window_open)
+        {
+            if(!Mouse_pressed)
+            {
+                if(Toggle_flipped3)
+                {
+                    Toggle_flipped3=0;
+                    Mouse_pressed=1;
+                    chest4_open=0;
+                }
+            }
+            if(!Mouse_pressed)
+            {
+                if (!Toggle_flipped3)
+                {
+                    Toggle_flipped3=1;
+                    Mouse_pressed=1;
+                    chest4_open=1;
+                }
+            }
+
+        }
+
+     }
+     else Mouse_pressed=0;
+
+
+
+     if(chest2_open)
+         Toggle1.setTextureRect(Toggle_Position[0]);
+     else
+         Toggle1.setTextureRect(Toggle_Position[1]);
+
+     if(chest3_open)
+         Toggle2.setTextureRect(Toggle_Position[0]);
+     else
+         Toggle2.setTextureRect(Toggle_Position[1]);
+     if(chest4_open)
+         Toggle3.setTextureRect(Toggle_Position[0]);
+     else
+         Toggle3.setTextureRect(Toggle_Position[1]);
+
+
+
+
+}
 //###########################################################################################################
 float grid_size=60.f;
+
 void Level_Platforms::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     for(int i=0; i<single_platform.size(); i++)
@@ -709,7 +870,6 @@ std::vector<sf::FloatRect> Level_Platforms::PlatformBounds()
     }
     return CakeIsALie;
 }
-
 
 void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {

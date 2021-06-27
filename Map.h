@@ -25,9 +25,11 @@ class Map_Texture    : public sf::Drawable
 {
     std::vector<sf::Sprite> Texture_Box;
     std::vector<sf::IntRect> Chest_Position;
+    std::vector<sf::IntRect> Toggle_Position;
 
     std::ifstream map;
     Tutorial animation;
+    bool Mouse_pressed=0;
 
 public:
 
@@ -45,6 +47,7 @@ public:
     sf::Texture F_Texture;
     sf::Texture C_Texture;
     sf::Texture fire_texture;
+    sf::Texture Toggle_Texture;
 
     sf::Sprite Walls;
     sf::Sprite Chest;
@@ -58,6 +61,9 @@ public:
     sf::Sprite F;
     sf::Sprite C;
     sf::Sprite fireplace;
+    sf::Sprite Toggle1;
+    sf::Sprite Toggle2;
+    sf::Sprite Toggle3;
 
     sf::Font font;
     sf::Text Tutorial1_1;
@@ -73,6 +79,7 @@ public:
     void Map_animation(float Second, float camera);
     void is_this_fresh_file(bool it_is, std::vector<bool> chest);
     void reset();
+    void Cheat_window(sf::Vector2f mouse_pos);
 };
 
 //###########################################################################################################

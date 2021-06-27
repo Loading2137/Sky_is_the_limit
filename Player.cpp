@@ -620,13 +620,6 @@ Player_Sounds::Player_Sounds()
     Bruh_sound.setBuffer(Bruh_buffer);
     Bruh_sound.setVolume(120);
 
-    yamete_buffer.loadFromFile("Yamete kudasai sound effect.ogg");
-    yamete_sound.setBuffer(yamete_buffer);
-    yamete_sound.setVolume(120);
-
-
-
-
     Buffer_run.loadFromFile("step_cloth1.ogg");
     You_say_run.setBuffer(Buffer_run);
     You_say_run.setVolume(80);
@@ -638,8 +631,6 @@ void Player_Sounds::Sound_movement(int window_value, std::vector<bool> bruh)
 {
     if(window_value==6)
     {
-
-        //std::cout<<bruh_wo1<<"   "<<bruh_wo2<<"   "<<bruh_wo3<<"   "<<bruh_wo4<<"   "<<std::endl;
 
         if(bruh[0])
         {

@@ -16,6 +16,12 @@ bool chest3_open=0;
 bool chest4_open=0;
 bool chest5_open=0;
 
+bool chest1_open_lastframe=0;
+bool chest2_open_lastframe=0;
+bool chest3_open_lastframe=0;
+bool chest4_open_lastframe=0;
+bool chest5_open_lastframe=0;
+
 bool Toggle_flipped1=0;
 bool Toggle_flipped2=0;
 bool Toggle_flipped3=0;
@@ -24,13 +30,9 @@ bool Cheat_window_open=0;
 
 
 
-bool chest1_open_lastframe=0;
-bool chest2_open_lastframe=0;
-bool chest3_open_lastframe=0;
-bool chest4_open_lastframe=0;
-bool chest5_open_lastframe=0;
 
-bool window_open=0;
+
+bool Tutorial_window_open=0;
 
 bool fresh_file=1;
 int Tutorial_part=1;
@@ -131,7 +133,7 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
             target.draw(Tutorial1_2,states);
             target.draw(Tutorial1_3,states);
             target.draw(Tutorial1_4,states);
-            window_open=1;
+            Tutorial_window_open=1;
         }
         if(Tutorial_part==2)
         {
@@ -141,7 +143,7 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
             target.draw(Tutorial1_2,states);
             target.draw(Tutorial1_3,states);
             target.draw(Tutorial1_4,states);
-            window_open=1;
+            Tutorial_window_open=1;
 
 
         }
@@ -150,42 +152,42 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
     }
     if(chest1_open && !chest1_open_lastframe)
     {
-        if(!window_open)
+        if(!Tutorial_window_open)
         {
         Tutorial_part=4;
-        window_open=1;
+        Tutorial_window_open=1;
         }
     }
     if(chest2_open && !chest2_open_lastframe )
     {
-        if(!window_open)
+        if(!Tutorial_window_open)
         {
         Tutorial_part=6;
-        window_open=1;
+        Tutorial_window_open=1;
         }
     }
     if(chest3_open && !chest3_open_lastframe)
     {
-        if(!window_open)
+        if(!Tutorial_window_open)
         {
         Tutorial_part=8;
-        window_open=1;
+        Tutorial_window_open=1;
         }
     }
     if(chest4_open && !chest4_open_lastframe)
     {
-        if(!window_open)
+        if(!Tutorial_window_open)
         {
         Tutorial_part=10;
-        window_open=1;
+        Tutorial_window_open=1;
         }
     }
     if(chest5_open && !chest5_open_lastframe)
     {
-        if(!window_open)
+        if(!Tutorial_window_open)
         {
         Tutorial_part=12;
-        window_open=1;
+        Tutorial_window_open=1;
         }
     }
     if(Tutorial_part==4)
@@ -239,12 +241,12 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
 
     }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && window_open)
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Enter) && Tutorial_window_open)
     {
         if(!already_preesed)
         {
         Tutorial_part++;
-         window_open=0;
+         Tutorial_window_open=0;
         already_preesed=1;
         }
     }
@@ -253,7 +255,7 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
         if(!already_preesed)
         {
         Tutorial_part=20;
-        window_open=0;
+        Tutorial_window_open=0;
         already_preesed=1;
         }
     }

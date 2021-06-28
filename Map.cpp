@@ -272,8 +272,6 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
         target.draw(Toggle2_text,states);
         target.draw(Toggle3_text,states);
     }
-
-
 }
 
 Map_Texture::Map_Texture()

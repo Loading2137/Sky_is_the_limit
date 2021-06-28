@@ -223,9 +223,6 @@ void Player::Collisions(int window_value)
         for(auto &i : Collision_Box)
         {
 
-
-//            std::cout<<"Cokolwiek"<<std::endl;
-
             sf::Vector2f r =Reaction(i, Player_bounds);
             if(r != sf::Vector2f (0,0))
             {
@@ -306,13 +303,11 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
 
     if (isIntersecting_left)
     {
-       // std::cout<<"Left"<<std::endl;
         wall_right=1;
         reaction.x = Platform.left-(Player.left+Player.width);
     }
     else if(isIntersecting_right)
     {
-        //std::cout<<"right"<<std::endl;
         wall_left=1;
         reaction.x = (Platform.left+Platform.width)-Player.left;
     }
@@ -321,14 +316,12 @@ sf::Vector2f Player::Reaction(sf::FloatRect Platform, sf::FloatRect Player)
 
     else if(isIntersecting_top)
     {
-//        std::cout<<"Top"<<std::endl;
         wall_right=0;
         wall_left=0;
         reaction.y = Platform.top-(Player.top+Player.height);
     }
     else if(isIntersecting_bottom)
     {
-//        std::cout<<"Bottom"<<std::endl;
         wall_right=0;
         wall_left=0;
         reaction.y = (Platform.top+Platform.height)-Player.top;

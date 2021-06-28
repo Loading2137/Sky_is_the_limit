@@ -1218,7 +1218,7 @@ window.setView(view);
         }
         else
         {
-            r720.setPosition(Middle);
+            r1280.setPosition(Middle);
         }
 
         //#####################################################################################
@@ -1229,7 +1229,7 @@ window.setView(view);
                 mouse_pos.y<= r1920.getGlobalBounds().top+r1920.getGlobalBounds().height
                 && window_value==5)
         {
-            r1280.setPosition(860.0, 200.0);
+            r1920.setPosition(860.0, 200.0);
 
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
@@ -1244,7 +1244,7 @@ window.setView(view);
         }
         else
         {
-            r1280.setPosition(850.0, 200.0);
+            r1920.setPosition(850.0, 200.0);
         }
 
         //#####################################################################################
@@ -1282,7 +1282,7 @@ window.setView(view);
                 mouse_pos.y<= Resume.getGlobalBounds().top+Resume.getGlobalBounds().height
                 && window_value==7 )
         {
-            Resume.setPosition(Bottom_moved);
+            Resume.setPosition(Top_moved);
 
             if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
@@ -1295,7 +1295,7 @@ window.setView(view);
         }
         else
         {
-            Resume.setPosition(Bottom);
+            Resume.setPosition(Top);
         }
 
         //#####################################################################################

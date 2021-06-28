@@ -71,6 +71,10 @@ public:
     sf::Text Tutorial1_3;
     sf::Text Tutorial1_4;
 
+    sf::Text Toggle1_text;
+    sf::Text Toggle2_text;
+    sf::Text Toggle3_text;
+
     sf::Texture Pop_up;
     sf::Sprite Pop_up_window;
     std::vector<bool> is_chest_open();

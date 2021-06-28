@@ -266,7 +266,9 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
         target.draw(Toggle1,states);
         target.draw(Toggle2,states);
         target.draw(Toggle3,states);
-        //jeszcze tekst
+        target.draw(Toggle1_text,states);
+        target.draw(Toggle2_text,states);
+        target.draw(Toggle3_text,states);
     }
 
 
@@ -399,6 +401,22 @@ Map_Texture::Map_Texture()
     Toggle3.setScale(0.2,0.2);
     Toggle3.setTextureRect(Toggle_Position[1]);
 
+    Toggle1_text.setFont(font);
+    Toggle2_text.setFont(font);
+    Toggle3_text.setFont(font);
+
+    Toggle1_text.setCharacterSize(69);
+    Toggle2_text.setCharacterSize(69);
+    Toggle3_text.setCharacterSize(69);
+
+    Toggle1_text.setFillColor(sf::Color::White);
+    Toggle2_text.setFillColor(sf::Color::White);
+    Toggle3_text.setFillColor(sf::Color::White);
+
+    Toggle1_text.setString("Double Jump");
+    Toggle2_text.setString("Dash");
+    Toggle3_text.setString("Wall holding");
+
 
 
 
@@ -488,6 +506,11 @@ void Map_Texture::Map_animation(float Second, float camera)
     Toggle1.setPosition(sf::Vector2f(200.0, camera-340.f));
     Toggle2.setPosition(sf::Vector2f(200.0, camera-40.f));
     Toggle3.setPosition(sf::Vector2f(200.0, camera+260.f));
+
+    Toggle1_text.setPosition(sf::Vector2f(500.f, camera-340.f));
+    Toggle2_text.setPosition(sf::Vector2f(500.f, camera-40.f));
+    Toggle3_text.setPosition(sf::Vector2f(500.f, camera+260.f));
+
 
 }
 
@@ -662,9 +685,6 @@ void Map_Texture::Cheat_window(sf::Vector2f mouse_pos)
     {
         Cheat_window_open=0;
     }
-    std::cout<<Mouse_pressed<<"   "<<Cheat_window_open<<std::endl;
-
-
 
      if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
      {

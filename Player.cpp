@@ -3,9 +3,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <Player.h>
-#include <Map.h>
 #include <stdlib.h>
+#include "Player.h"
+#include "Map.h"
 
 Level_Platforms p1;
 Player_Animation p3;
@@ -69,7 +69,7 @@ Player::Player()
 
 }
 
-sf::Vector2f Player::getPosition(int number_of_saves, sf::Vector2f Spawn)
+void Player::getPosition(int number_of_saves, sf::Vector2f Spawn)
 {
     if(number_of_saves>0)
         Player_Box[0].setPosition(Spawn);
@@ -536,7 +536,7 @@ void Player_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) con
 Player_Texture::Player_Texture()
 {
     sf::Sprite Player;
-    Texture.loadFromFile("Player-Sheet.png");
+    Texture.loadFromFile("thingis/Player-Sheet.png");
     Player.setTexture(Texture);
     Player.setScale(4,4);
     Player.setPosition(sf::Vector2f(1200.f,900.f));
@@ -601,19 +601,19 @@ void Player_Texture::Movement_T(sf::Vector2f position, float Second)
 //###########################################################################################################
 Player_Sounds::Player_Sounds()
 {
-    Buffer_jump.loadFromFile("SFX_Jump_09.wav");
+    Buffer_jump.loadFromFile("thingis/SFX_Jump_09.wav");
     Sound_jump.setBuffer(Buffer_jump);
     Sound_jump.setVolume(60);
 
-    Buffer_double_jump.loadFromFile("SFX_Jump_42.wav");
+    Buffer_double_jump.loadFromFile("thingis/SFX_Jump_42.wav");
     Sound_Double_jump.setBuffer(Buffer_double_jump);
     Sound_Double_jump.setVolume(60);
 
-    Bruh_buffer.loadFromFile("Bruh Sound Effect #2.ogg");
+    Bruh_buffer.loadFromFile("thingis/Bruh Sound Effect #2.ogg");
     Bruh_sound.setBuffer(Bruh_buffer);
     Bruh_sound.setVolume(120);
 
-    Buffer_run.loadFromFile("step_cloth1.ogg");
+    Buffer_run.loadFromFile("thingis/step_cloth1.ogg");
     You_say_run.setBuffer(Buffer_run);
     You_say_run.setVolume(80);
     You_say_run.setLoop(true);

@@ -6,8 +6,8 @@
 #include <fstream>
 #include <string>
 #include <stdlib.h>
-#include <Player.h>
-#include <Map.h>
+#include "Player.h"
+#include "Map.h"
 
 void Saving(std::fstream &Save , sf::Vector2f position, std::vector<bool> chests) //Saving function
 {
@@ -32,11 +32,11 @@ int main()
     int Current_Save=0;
 
     std::fstream Save1;
-    Save1.open( "Save1" );
+    Save1.open( "Saves/Save1" );
     std::fstream Save2;
-    Save2.open( "Save2");
+    Save2.open( "Saves/Save2");
     std::fstream Save3;
-    Save3.open( "Save3");
+    Save3.open( "Saves/Save3");
 
     Save1.close();
     Save2.close();
@@ -104,7 +104,7 @@ int main()
     sf::Music music;
 
     // Open it from an audio file
-    if (!music.openFromFile("Ambience.ogg"))
+    if (!music.openFromFile("thingis/Ambience.ogg"))
     {
         // error...
     }
@@ -135,25 +135,25 @@ int main()
 
     sf::Sprite Background;
 
-    Background_Texture.loadFromFile("screen.jpg");
+    Background_Texture.loadFromFile("thingis/screen.jpg");
     Background.setTexture(Background_Texture);
     Background.setScale(1,1);
 
     sf::Sprite Start;
     Start.setPosition (Top);
-    Start_Texture.loadFromFile("Start 192x48.png");
+    Start_Texture.loadFromFile("thingis/Start 192x48.png");
     Start.setTexture(Start_Texture);
     Start.setScale(Common_scale);
 
     sf::Sprite Settings;
     Settings.setPosition(Middle);
-    Settings_Texture.loadFromFile("Settings 192x48.png");
+    Settings_Texture.loadFromFile("thingis/Settings 192x48.png");
     Settings.setTexture(Settings_Texture);
     Settings.setScale(Common_scale);
 
     sf::Sprite Exit_Game;
     Exit_Game.setPosition(Bottom);
-    Exit_Game_Texture.loadFromFile("Quit Game 192x48.png");
+    Exit_Game_Texture.loadFromFile("thingis/Quit Game 192x48.png");
     Exit_Game.setTexture(Exit_Game_Texture);
     Exit_Game.setScale(Common_scale);
 
@@ -171,19 +171,19 @@ int main()
 
     sf::Sprite Load;
     Load.setPosition(Middle);
-    Load_Texture.loadFromFile("Load 192x48.png");
+    Load_Texture.loadFromFile("thingis/Load 192x48.png");
     Load.setTexture(Load_Texture);
     Load.setScale(Common_scale);
 
     sf::Sprite New_Game;
     New_Game.setPosition(Top);
-    New_Game_Texture.loadFromFile("New Game 192x48.png");
+    New_Game_Texture.loadFromFile("thingis/New Game 192x48.png");
     New_Game.setTexture(New_Game_Texture);
     New_Game.setScale(Common_scale);
 
     sf::Sprite Continue_Game;
     Continue_Game.setPosition(Top);
-    Continue_Game_Texture.loadFromFile("Continue Game 192x48.png");
+    Continue_Game_Texture.loadFromFile("thingis/Continue Game 192x48.png");
     Continue_Game.setTexture(Continue_Game_Texture);
     Continue_Game.setScale(Common_scale);
 
@@ -193,7 +193,7 @@ int main()
     Empty1.setPosition(Top);
     Empty2.setPosition(sf::Vector2f(200.f,400));
     Empty3.setPosition(sf::Vector2f(200.f,600));
-    Empty_Texture.loadFromFile("Empty.png");
+    Empty_Texture.loadFromFile("thingis/Empty.png");
     Empty1.setTexture(Empty_Texture);
     Empty2.setTexture(Empty_Texture);
     Empty3.setTexture(Empty_Texture);
@@ -203,19 +203,19 @@ int main()
 
     sf::Sprite Save_1;
     Save_1.setPosition(Top);
-    Save1_Texture.loadFromFile("Save_1.png");
+    Save1_Texture.loadFromFile("thingis/Save_1.png");
     Save_1.setTexture(Save1_Texture);
     Save_1.setScale(Common_scale);
 
     sf::Sprite Save_2;
     Save_2.setPosition(sf::Vector2f(200.f,400));
-    Save2_Texture.loadFromFile("Save_2.png");
+    Save2_Texture.loadFromFile("thingis/Save_2.png");
     Save_2.setTexture(Save2_Texture);
     Save_2.setScale(Common_scale);
 
     sf::Sprite Save_3;
     Save_3.setPosition(sf::Vector2f(200.f,600));
-    Save3_Texture.loadFromFile("Save_3.png");
+    Save3_Texture.loadFromFile("thingis/Save_3.png");
     Save_3.setTexture(Save3_Texture);
     Save_3.setScale(Common_scale);
 
@@ -231,19 +231,19 @@ int main()
 
     sf::Sprite Audio;
     Audio.setPosition(Top);
-    Audio_Texture.loadFromFile("Audio 192x48.png");
+    Audio_Texture.loadFromFile("thingis/Audio 192x48.png");
     Audio.setTexture(Audio_Texture);
     Audio.setScale(Common_scale);
 
     sf::Sprite Graphics;
     Graphics.setPosition(Middle);
-    Graphics_Texture.loadFromFile("Graphics 192x48.png");
+    Graphics_Texture.loadFromFile("thingis/Graphics 192x48.png");
     Graphics.setTexture(Graphics_Texture);
     Graphics.setScale(Common_scale);
 
     sf::Sprite Exit;
     Exit.setPosition(Bottom);
-    Exit_Texture.loadFromFile("Exit 192x48.png");
+    Exit_Texture.loadFromFile("thingis/Exit 192x48.png");
     Exit.setTexture(Exit_Texture);
     Exit.setScale(Common_scale);
 
@@ -256,19 +256,19 @@ int main()
 
     sf::Sprite Window_Resize;
     Window_Resize.setPosition(Top);
-    Window_Resize_Texture.loadFromFile("Window Resize.png");
+    Window_Resize_Texture.loadFromFile("thingis/Window Resize.png");
     Window_Resize.setTexture(Window_Resize_Texture);
     Window_Resize.setScale(Common_scale);
 
     sf::Sprite Toggle1;
     Toggle1.setPosition(Middle);
-    Toggle_Texture.loadFromFile("img_522367.png");
+    Toggle_Texture.loadFromFile("thingis/img_522367.png");
     Toggle1.setTexture(Toggle_Texture);
     Toggle1.setScale(0.2,0.2);
 
     sf::Sprite Toggle2;
     Toggle2.setPosition(Middle);
-    RTX_Texture.loadFromFile("rtx.png");
+    RTX_Texture.loadFromFile("thingis/rtx.png");
     Toggle2.setTexture(RTX_Texture);
     Toggle2.setScale(Common_scale);
 
@@ -285,14 +285,14 @@ int main()
 
     sf::Font font_;
     sf::Text RTX_Text;
-    font_.loadFromFile("OpenSans-Bold.ttf");
+    font_.loadFromFile("thingis/OpenSans-Bold.ttf");
     RTX_Text.setFont(font_);
     RTX_Text.setCharacterSize(69);
     RTX_Text.setPosition(500.f,Middle.y);
     RTX_Text.setString("Does absolutly nothing");
 
     sf::Text Audio_Text;
-    font_.loadFromFile("OpenSans-Bold.ttf");
+    font_.loadFromFile("thingis/OpenSans-Bold.ttf");
     Audio_Text.setFont(font_);
     Audio_Text.setCharacterSize(69);
     Audio_Text.setPosition(Top);
@@ -308,25 +308,25 @@ int main()
 
     sf::Sprite r720;
     r720.setPosition(Top);
-    r720t.loadFromFile("720.png");
+    r720t.loadFromFile("thingis/720.png");
     r720.setTexture(r720t);
     r720.setScale(Common_scale);
 
     sf::Sprite r1280;
     r1280.setPosition(Middle);
-    r1280t.loadFromFile("1280.png");
+    r1280t.loadFromFile("thingis/1280.png");
     r1280.setTexture(r1280t);
     r1280.setScale(Common_scale);
 
     sf::Sprite r1920;
     r1920.setPosition(850.0, 200.0);
-    r1920t.loadFromFile("1920.png");
+    r1920t.loadFromFile("thingis/1920.png");
     r1920.setTexture(r1920t);
     r1920.setScale(Common_scale);
 
     sf::Sprite r2560;
     r2560.setPosition(850.0, 500.0);
-    r2560t.loadFromFile("2560.png");
+    r2560t.loadFromFile("thingis/2560.png");
     r2560.setTexture(r2560t);
     r2560.setScale(Common_scale);
 
@@ -340,13 +340,13 @@ int main()
 
     sf::Sprite Back;
     Back.setPosition(Bottom);
-    Back_Texture.loadFromFile("Back.png");
+    Back_Texture.loadFromFile("thingis/Back.png");
     Back.setTexture(Back_Texture);
     Back.setScale(Common_scale);
 
     sf::Sprite Resume;
     Resume.setPosition(Top);
-    Resume_Texture.loadFromFile("Resume.png");
+    Resume_Texture.loadFromFile("thingis/Resume.png");
     Resume.setTexture(Resume_Texture);
     Resume.setScale(Common_scale);
 
@@ -375,7 +375,7 @@ int main()
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
-                window.close();         
+                window.close();
             window.setSize(sf::Vector2u(screen_width, screen_height));
 
         }
@@ -452,7 +452,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=1;
                     number_of_saves++;
-                    Save1.open("Save1", std::ios::out );
+                    Save1.open("Saves/Save1", std::ios::out );
                     Save1.close();
                     std::vector<bool> chest;
                     chest.push_back(0);
@@ -490,7 +490,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=1;
                     std::vector<bool> chest;
-                    Save1.open("Save1");
+                    Save1.open("Saves/Save1");
                     std::string linia ;
                     int nr_lini=1;
                     for(int i = 0; i<7; i++)
@@ -597,7 +597,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=1;
                     number_of_saves++;
-                    Save1.open("Save1", std::ios::out );
+                    Save1.open("Saves/Save1", std::ios::out );
                     Save1.close();
                     std::vector<bool> chest;
                     chest.push_back(0);
@@ -635,7 +635,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=2;
                     number_of_saves++;
-                    Save2.open("Save2", std::ios::out );
+                    Save2.open("Saves/Save2", std::ios::out );
                     Save2.close();
                     std::vector<bool> chest;
                     chest.push_back(0);
@@ -674,7 +674,7 @@ window.setView(view);
                     Current_Save=3;
                     window_value=6;
                     number_of_saves++;
-                    Save3.open("Save3", std::ios::out );
+                    Save3.open("Saves/Save3", std::ios::out );
                     Save3.close();
                     std::vector<bool> chest;
                     chest.push_back(0);
@@ -712,7 +712,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=1;
                     std::vector<bool> chest;
-                    Save1.open("Save1", std::ios::in);
+                    Save1.open("Saves/Save1", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
                     for(int i = 0; i<7; i++)
@@ -802,7 +802,7 @@ window.setView(view);
                     window_value=6;
                     Current_Save=2;
                     std::vector<bool> chest;
-                    Save2.open("Save2", std::ios::in);
+                    Save2.open("Saves/Save2", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
                     for(int i = 0; i<7; i++)
@@ -892,7 +892,7 @@ window.setView(view);
                     window_value=6;
                     std::vector<bool> chest;
 
-                    Save3.open("Save3", std::ios::in);
+                    Save3.open("Saves/Save3", std::ios::in);
                     std::string linia ;
                     int nr_lini=1;
                     for(int i = 0; i<7; i++)
@@ -1111,7 +1111,7 @@ window.setView(view);
                     {
                         if(Current_Save==1)
                         {
-                            Save1.open("Save1", std::ios::out);
+                            Save1.open("Saves/Save1", std::ios::out);
                             Saving(Save1, p1.Position(), p7.is_chest_open());
                             Save1.close();
                             p7.reset();
@@ -1119,7 +1119,7 @@ window.setView(view);
                         }
                         if(Current_Save==2)
                         {
-                            Save2.open("Save2", std::ios::out);
+                            Save2.open("Saves/Save2", std::ios::out);
                             Saving(Save2, p1.Position(), p7.is_chest_open());
                             Save2.close();
                             p7.reset();
@@ -1127,7 +1127,7 @@ window.setView(view);
                         }
                         if(Current_Save==3)
                         {
-                            Save3.open("Save3", std::ios::out);
+                            Save3.open("Saves/Save3", std::ios::out);
                             Saving(Save3, p1.Position(), p7.is_chest_open());
                             Save3.close();
                             p7.reset();
@@ -1552,21 +1552,21 @@ window.setView(view);
             {
                 if(Current_Save==1)
                 {
-                    Save1.open("Save1", std::ios::out);
+                    Save1.open("Saves/Save1", std::ios::out);
                     Saving(Save1, p1.Position(), p7.is_chest_open());
                     Save1.close();
 
                 }
                 if(Current_Save==2)
                 {
-                    Save2.open("Save2", std::ios::out);
+                    Save2.open("Saves/Save2", std::ios::out);
                     Saving(Save2, p1.Position(), p7.is_chest_open());
                     Save2.close();
 
                 }
                 if(Current_Save==3)
                 {
-                    Save3.open("Save3", std::ios::out);
+                    Save3.open("Saves/Save3", std::ios::out);
                     Saving(Save3, p1.Position(), p7.is_chest_open());
                     Save3.close();
 

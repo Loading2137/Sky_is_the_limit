@@ -14,7 +14,7 @@ public:
     sf::Texture Player_Texture();
     sf::FloatRect Player_bounds();
     sf::Vector2f Reaction(sf::FloatRect Platform, sf::FloatRect Player);
-    sf::Vector2f getPosition(int number_of_saves, sf::Vector2f Spawn);
+    void getPosition(int number_of_saves, sf::Vector2f Spawn);
     sf::Vector2f Position();
     float camera_position(int window_value, float current_position);
     void Movement(float Second, int window_value, std::vector<bool> abilities);

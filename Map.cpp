@@ -2,8 +2,8 @@
 #include <vector>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <Player.h>
-#include <Map.h>
+#include "Player.h"
+#include "Map.h"
 #include <string>
 #include <fstream>
 
@@ -277,7 +277,7 @@ void Map_Texture::draw(sf::RenderTarget &target, sf::RenderStates states) const
 Map_Texture::Map_Texture()
 {
 
-    font.loadFromFile("OpenSans-Bold.ttf");
+    font.loadFromFile("thingis/OpenSans-Bold.ttf");
     Tutorial1_1.setFont(font);
     Tutorial1_2.setFont(font);
     Tutorial1_3.setFont(font);
@@ -295,22 +295,22 @@ Map_Texture::Map_Texture()
 
 
 
-    Pop_up.loadFromFile("Pop_up.png");
+    Pop_up.loadFromFile("thingis/Pop_up.png");
     Pop_up_window.setTexture(Pop_up);
 
 
 
 
-    Chest_Texture.loadFromFile("Chest_press2.png");
-    Door_Texture.loadFromFile("Door.png");
-    E_Texture.loadFromFile("E.png");
-    R_Texture.loadFromFile("R.png");
-    A_Texture.loadFromFile("A.png");
-    S_Texture.loadFromFile("S.png");
-    D_Texture.loadFromFile("D.png");
-    F_Texture.loadFromFile("F.png");
-    C_Texture.loadFromFile("C.png");
-    fire_texture.loadFromFile("fire.png");
+    Chest_Texture.loadFromFile("thingis/Chest_press2.png");
+    Door_Texture.loadFromFile("thingis/Door.png");
+    E_Texture.loadFromFile("thingis/E.png");
+    R_Texture.loadFromFile("thingis/R.png");
+    A_Texture.loadFromFile("thingis/A.png");
+    S_Texture.loadFromFile("thingis/S.png");
+    D_Texture.loadFromFile("thingis/D.png");
+    F_Texture.loadFromFile("thingis/F.png");
+    C_Texture.loadFromFile("thingis/C.png");
+    fire_texture.loadFromFile("thingis/fire.png");
 
 
 
@@ -335,7 +335,7 @@ Map_Texture::Map_Texture()
 
     int elements_pushed=0;
     float grid_size=60.f;
-    map.open("map.txt");
+    map.open("thingis/map.txt");
     int linia ;
     std::vector <int> platforms;
 
@@ -385,7 +385,7 @@ Map_Texture::Map_Texture()
     Toggle_Position.push_back(sf::IntRect(0, 540, 978, 455));
 
 
-    Toggle_Texture.loadFromFile("img_522367.png");
+    Toggle_Texture.loadFromFile("thingis/img_522367.png");
 
     Toggle1.setTexture(Toggle_Texture);
     Toggle1.setScale(0.2,0.2);
@@ -805,13 +805,13 @@ void Level_Platforms::draw(sf::RenderTarget &target, sf::RenderStates states) co
 
 Level_Platforms::Level_Platforms()
 {
-    Walls_Texture.loadFromFile("Test.png");
+    Walls_Texture.loadFromFile("thingis/Test.png");
     Walls_Texture.setRepeated(true);
 
 
     sf::RectangleShape Platform (sf::Vector2f(grid_size,grid_size));
     int elements_pushed=0;
-    map.open("map.txt");
+    map.open("thingis/map.txt");
     int linia ;
     std::vector <int> platforms;
 
@@ -900,9 +900,9 @@ void BackGround::draw(sf::RenderTarget &target, sf::RenderStates states) const
 BackGround::BackGround()
 {
 
-    BackGround_Texture.loadFromFile("Wall2.png");
+    BackGround_Texture.loadFromFile("thingis/Wall2.png");
     BackGround_Texture.setRepeated(true);
-    BackGround_Texture2.loadFromFile("bg_layer1.png");
+    BackGround_Texture2.loadFromFile("thingis/bg_layer1.png");
     BackGround_Texture2.setRepeated(true);
 
     BackGround_T.setTexture(BackGround_Texture);
@@ -941,33 +941,33 @@ Glados::Glados()
     GladosFrames.push_back(sf::IntRect(3346,0,548,740));
     GladosFrames.push_back(sf::IntRect(3895,0,548,740));
 
-    Glados_Texture.loadFromFile("glados.png");
+    Glados_Texture.loadFromFile("thingis/glados.png");
     Glados_sprite.setTexture(Glados_Texture);
 
     Glados_sprite.setScale(-1, 1);
     Glados_sprite.setPosition(600.f, 0.f);
 
 
-    Cake_Texture.loadFromFile("cake_is_a_lie.png");
+    Cake_Texture.loadFromFile("thingis/cake_is_a_lie.png");
     Cake_sprite.setTexture(Cake_Texture);
     Cake_sprite.setPosition(930.f, 900.f);
     Cake_sprite.setScale(0.5, 0.5);
 
 
-    Floor_dummy_Texture.loadFromFile("test.png");
+    Floor_dummy_Texture.loadFromFile("thingis/test.png");
     Floor_dummy_Texture.setRepeated(1);
     Floor_dummy.setSize(sf::Vector2f(1920.f,60.f));
     Floor_dummy.setPosition(0,1020.f);
     Floor_dummy.setTexture(&Floor_dummy_Texture);
     Floor_dummy.setTextureRect(sf::IntRect(0, 0, 1920.f,60.f));
 
-    Background_Texture.loadFromFile("wall2.png");
+    Background_Texture.loadFromFile("thingis/wall2.png");
     Background_Texture.setRepeated(1);
     Background.setPosition(0,0);
     Background.setTexture(Background_Texture);
     Background.setTextureRect(sf::IntRect(0, 0, 1920.f,1080.f));
 
-    Player_dummy_Texture.loadFromFile("Player-Sheet.png");
+    Player_dummy_Texture.loadFromFile("thingis/Player-Sheet.png");
     Player_dummy_sprite.setTexture(Player_dummy_Texture);
     Player_dummy_sprite.setPosition(1190.f,925.f);
     Player_dummy_sprite.setScale(-6, 6);
@@ -982,7 +982,7 @@ Glados::Glados()
     idleAnimation.push_back(sf::IntRect(156, 0, 8, 16));
     idleAnimation.push_back(sf::IntRect(220, 0, 8, 16));
 
-    font.loadFromFile("OpenSans-Bold.ttf");
+    font.loadFromFile("thingis/OpenSans-Bold.ttf");
     Bad_ending.setFont(font);
     Bad_ending.setCharacterSize(120);
     Bad_ending.setFillColor(sf::Color::Red);
